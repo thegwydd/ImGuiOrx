@@ -11,7 +11,18 @@
 // https://github.com/ocornut/imgui
 
 #include "ImGui_ImplOrx.h"
+
+#ifdef _WIN32
+#include <windows.h>
+#endif
+#include <gl/GL.h>
+
+extern "C" {
 #include <orx.h>
+}
+
+
+static GLuint       g_FontTexture = 0;
 
 //////////////////////////////////////////////////////////////////////////
 // This is the main rendering function that you have to implement and provide to ImGui (via setting up 'RenderDrawListsFn' in the ImGuiIO structure)
@@ -100,31 +111,35 @@ void ImGui_ImplOrx_RenderDrawLists(ImDrawData* draw_data)
 //////////////////////////////////////////////////////////////////////////
 static const char* ImGui_ImplOrx_GetClipboardText(void* user_data)
 {
-    return glfwGetClipboardString((GLFWwindow*)user_data);
+    return NULL;
 }
 
 //////////////////////////////////////////////////////////////////////////
 static void ImGui_ImplOrx_SetClipboardText(void* user_data, const char* text)
 {
-    glfwSetClipboardString((GLFWwindow*)user_data, text);
 }
 
 //////////////////////////////////////////////////////////////////////////
-void ImGui_ImplOrx_MouseButtonCallback(GLFWwindow*, int button, int action, int /*mods*/)
+void ImGui_ImplOrx_MouseButtonCallback(int button, int action, int /*mods*/)
 {
+/*
     if (action == GLFW_PRESS && button >= 0 && button < 3)
         g_MousePressed[button] = true;
+*/
 }
 
 //////////////////////////////////////////////////////////////////////////
-void ImGui_ImplOrx_ScrollCallback(GLFWwindow*, double /*xoffset*/, double yoffset)
+void ImGui_ImplOrx_ScrollCallback(double /*xoffset*/, double yoffset)
 {
+/*
     g_MouseWheel += (float)yoffset; // Use fractional mouse wheel, 1.0 unit 5 lines.
+*/
 }
 
 //////////////////////////////////////////////////////////////////////////
-void ImGui_ImplGlFw_KeyCallback(GLFWwindow*, int key, int, int action, int mods)
+void ImGui_ImplGlFw_KeyCallback(int key, int, int action, int mods)
 {
+/*
     ImGuiIO& io = ImGui::GetIO();
     if (action == GLFW_PRESS)
         io.KeysDown[key] = true;
@@ -136,14 +151,17 @@ void ImGui_ImplGlFw_KeyCallback(GLFWwindow*, int key, int, int action, int mods)
     io.KeyShift = io.KeysDown[GLFW_KEY_LEFT_SHIFT] || io.KeysDown[GLFW_KEY_RIGHT_SHIFT];
     io.KeyAlt = io.KeysDown[GLFW_KEY_LEFT_ALT] || io.KeysDown[GLFW_KEY_RIGHT_ALT];
     io.KeySuper = io.KeysDown[GLFW_KEY_LEFT_SUPER] || io.KeysDown[GLFW_KEY_RIGHT_SUPER];
+*/
 }
 
 //////////////////////////////////////////////////////////////////////////
-void ImGui_ImplOrx_CharCallback(GLFWwindow*, unsigned int c)
+void ImGui_ImplOrx_CharCallback(unsigned int c)
 {
+/*
     ImGuiIO& io = ImGui::GetIO();
     if (c > 0 && c < 0x10000)
         io.AddInputCharacter((unsigned short)c);
+*/
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -236,42 +254,13 @@ void ImGui_ImplOrx_NewFrame()
     ImGuiIO& io = ImGui::GetIO();
 
     // Setup display size (every frame to accommodate for window resizing)
-    int w, h;
-    int display_w, display_h;
-    glfwGetWindowSize(g_Window, &w, &h);
-    glfwGetFramebufferSize(g_Window, &display_w, &display_h);
-    io.DisplaySize = ImVec2((float)w, (float)h);
-    io.DisplayFramebufferScale = ImVec2(w > 0 ? ((float)display_w / w) : 0, h > 0 ? ((float)display_h / h) : 0);
+    orxFLOAT display_w, display_h;
 
-    // Setup time step
-    double current_time =  glfwGetTime();
-    io.DeltaTime = g_Time > 0.0 ? (float)(current_time - g_Time) : (float)(1.0f/60.0f);
-    g_Time = current_time;
+    /* get screen size */
+    orxDisplay_GetScreenSize(&display_w, &display_h);
 
-    // Setup inputs
-    // (we already got mouse wheel, keyboard keys & characters from glfw callbacks polled in glfwPollEvents())
-    if (glfwGetWindowAttrib(g_Window, GLFW_FOCUSED))
-    {
-        double mouse_x, mouse_y;
-        glfwGetCursorPos(g_Window, &mouse_x, &mouse_y);
-        io.MousePos = ImVec2((float)mouse_x, (float)mouse_y);   // Mouse position in screen coordinates (set to -1,-1 if no mouse / on another screen, etc.)
-    }
-    else
-    {
-        io.MousePos = ImVec2(-1,-1);
-    }
-
-    for (int i = 0; i < 3; i++)
-    {
-        io.MouseDown[i] = g_MousePressed[i] || glfwGetMouseButton(g_Window, i) != 0;    // If a mouse press event came, always pass it as "mouse held this frame", so we don't miss click-release events that are shorter than 1 frame.
-        g_MousePressed[i] = false;
-    }
-
-    io.MouseWheel = g_MouseWheel;
-    g_MouseWheel = 0.0f;
-
-    // Hide OS mouse cursor if ImGui is drawing it
-    glfwSetInputMode(g_Window, GLFW_CURSOR, io.MouseDrawCursor ? GLFW_CURSOR_HIDDEN : GLFW_CURSOR_NORMAL);
+    io.DisplaySize = ImVec2(display_w, display_h);
+    io.DisplayFramebufferScale = ImVec2(1, 1);
 
     // Start the frame
     ImGui::NewFrame();

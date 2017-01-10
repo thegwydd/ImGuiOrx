@@ -3,3 +3,5 @@ Release/*
 ImGuiOrx/Debug/*
 ImGuiOrx/Release/*
 *.sdf
+ImGuiOrx/x64/*
+*.pdb

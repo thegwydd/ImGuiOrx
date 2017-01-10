@@ -100,7 +100,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>orxd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>orxd.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>copy /Y "$(ORX_PATH)\code\lib\dynamic\*.dll" "$(TargetDir)"
@@ -118,7 +118,7 @@ copy "$(ProjectDir)\*.ini" "$(TargetDir)"</Command>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>orxd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>orxd.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>copy /Y "$(ORX_PATH)\code\lib\dynamic\*.dll" "$(TargetDir)"
@@ -140,7 +140,7 @@ copy "$(ProjectDir)\*.ini" "$(TargetDir)"</Command>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>orxd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>orxd.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>copy /Y "$(ORX_PATH)\code\lib\dynamic\*.dll" "$(TargetDir)"
@@ -162,7 +162,7 @@ copy "$(ProjectDir)\*.ini" "$(TargetDir)"</Command>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>orxd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>orxd.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>copy /Y "$(ORX_PATH)\code\lib\dynamic\*.dll" "$(TargetDir)"

@@ -1,7 +1,9 @@
 #pragma once
 //! Includes
 
+extern "C" {
 #include <orx.h>
+    }
 
 #define __NO_SCROLLED__
 #include "Scroll/Scroll.h"

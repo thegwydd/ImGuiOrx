@@ -23,7 +23,7 @@ IMGUI_API bool        ImGui_ImplOrx_CreateDeviceObjects();
 // GLFW callbacks (installed by default if you enable 'install_callbacks' during initialization)
 // Provided here if you want to chain callbacks.
 // You can also handle inputs yourself and use those as a reference.
-IMGUI_API void        ImGui_ImplOrx_MouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
-IMGUI_API void        ImGui_ImplOrx_ScrollCallback(GLFWwindow* window, double xoffset, double yoffset);
-IMGUI_API void        ImGui_ImplGlFw_KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
-IMGUI_API void        ImGui_ImplOrx_CharCallback(GLFWwindow* window, unsigned int c);
+IMGUI_API void        ImGui_ImplOrx_MouseButtonCallback(int button, int action, int mods);
+IMGUI_API void        ImGui_ImplOrx_ScrollCallback(double xoffset, double yoffset);
+IMGUI_API void        ImGui_ImplGlFw_KeyCallback(int key, int scancode, int action, int mods);
+IMGUI_API void        ImGui_ImplOrx_CharCallback(unsigned int c);
