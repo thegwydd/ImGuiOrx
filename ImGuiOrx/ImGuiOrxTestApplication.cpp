@@ -65,7 +65,6 @@ orxSTATUS ImGuiOrxTestApplication::Run ()
     // 1. Show a simple window
     // Tip: if we don't call ImGui::Begin()/ImGui::End() the widgets appears in a window automatically called "Debug"
     ImGui::Text("Hello, world!"); 
-/*
     static float f = 0.0f;
     ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
     ImGui::ColorEdit3("clear color", (float*)&clear_color);
@@ -88,7 +87,6 @@ orxSTATUS ImGuiOrxTestApplication::Run ()
         ImGui::SetNextWindowPos(ImVec2(650, 20), ImGuiSetCond_FirstUseEver);
         ImGui::ShowTestWindow(&show_test_window);
         }
-*/
 
     // Rendering
     ImGui::Render();
