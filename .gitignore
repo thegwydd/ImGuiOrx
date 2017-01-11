@@ -5,3 +5,4 @@ ImGuiOrx/Release/*
 *.sdf
 ImGuiOrx/x64/*
 *.pdb
+*.VC.db

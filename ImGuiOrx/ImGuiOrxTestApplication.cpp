@@ -43,18 +43,10 @@ orxSTATUS ImGuiOrxTestApplication::Init ()
 	{
 	orxSTATUS result = orxSTATUS_SUCCESS;
     
-    // Setup ImGui binding
-    ImGui_ImplOrx_Init();
-
-    // Load Fonts
-    // (there is a default font, this is only if you want to change it. see extra_fonts/README.txt for more details)
-    //ImGuiIO& io = ImGui::GetIO();
-    //io.Fonts->AddFontDefault();
-    //io.Fonts->AddFontFromFileTTF("../../extra_fonts/Cousine-Regular.ttf", 15.0f);
-    //io.Fonts->AddFontFromFileTTF("../../extra_fonts/DroidSans.ttf", 16.0f);
-    //io.Fonts->AddFontFromFileTTF("../../extra_fonts/ProggyClean.ttf", 13.0f);
-    //io.Fonts->AddFontFromFileTTF("../../extra_fonts/ProggyTiny.ttf", 10.0f);
-    //io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\ArialUni.ttf", 18.0f, NULL, io.Fonts->GetGlyphRangesJapanese());
+    InitializeGuiSystem();
+    InitializeEvents();
+    BindObjects();
+    InitializeScene();
 
 	return result;
 	}
@@ -72,8 +64,9 @@ orxSTATUS ImGuiOrxTestApplication::Run ()
 
     // 1. Show a simple window
     // Tip: if we don't call ImGui::Begin()/ImGui::End() the widgets appears in a window automatically called "Debug"
+    ImGui::Text("Hello, world!"); 
+/*
     static float f = 0.0f;
-    ImGui::Text("Hello, world!");
     ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
     ImGui::ColorEdit3("clear color", (float*)&clear_color);
     if (ImGui::Button("Test Window")) show_test_window ^= 1;
@@ -95,9 +88,9 @@ orxSTATUS ImGuiOrxTestApplication::Run ()
         ImGui::SetNextWindowPos(ImVec2(650, 20), ImGuiSetCond_FirstUseEver);
         ImGui::ShowTestWindow(&show_test_window);
         }
+*/
 
     // Rendering
-    int display_w, display_h;
     ImGui::Render();
 
     return result;
@@ -112,10 +105,10 @@ void ImGuiOrxTestApplication::Exit ()
 //////////////////////////////////////////////////////////////////////////
 orxSTATUS ImGuiOrxTestApplication::HandleOrxEvent(const orxEVENT *_pstEvent)
 	{
-/*
 	if ((_pstEvent->eType == orxEVENT_TYPE_RENDER) && (_pstEvent->eID == orxRENDER_EVENT_STOP))
-		m_pCanvas->RenderCanvas();
+        ImGui_ImplOrx_Render(NULL, ImGui::GetDrawData());
 
+/*
 	if (_pstEvent->eType == orxEVENT_TYPE_DISPLAY)
 			UpdateCanvasSize();
 */
@@ -129,14 +122,31 @@ orxSTATUS ImGuiOrxTestApplication::HandleOrxEvent(const orxEVENT *_pstEvent)
 	}
 
 //////////////////////////////////////////////////////////////////////////
+void ImGuiOrxTestApplication::InitializeGuiSystem()
+    {
+    // Setup ImGui binding
+    ImGui_ImplOrx_Init();
+
+    // Load Fonts
+    // (there is a default font, this is only if you want to change it. see extra_fonts/README.txt for more details)
+    //ImGuiIO& io = ImGui::GetIO();
+    //io.Fonts->AddFontDefault();
+    //io.Fonts->AddFontFromFileTTF("../../extra_fonts/Cousine-Regular.ttf", 15.0f);
+    //io.Fonts->AddFontFromFileTTF("../../extra_fonts/DroidSans.ttf", 16.0f);
+    //io.Fonts->AddFontFromFileTTF("../../extra_fonts/ProggyClean.ttf", 13.0f);
+    //io.Fonts->AddFontFromFileTTF("../../extra_fonts/ProggyTiny.ttf", 10.0f);
+    //io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\ArialUni.ttf", 18.0f, NULL, io.Fonts->GetGlyphRangesJapanese());
+    }
+
+
+//////////////////////////////////////////////////////////////////////////
 void ImGuiOrxTestApplication::InitializeEvents()
 	{
-/*
 	//.. renderer
-	orxEvent_AddHandler(orxEVENT_TYPE_RENDER, StaticEventHandler);
+    orxEvent_AddHandler(orxEVENT_TYPE_RENDER, StaticEventHandler);
+    orxEvent_AddHandler(orxEVENT_TYPE_VIEWPORT, StaticEventHandler);
 	// add event for resizing
 	orxEvent_AddHandler(orxEVENT_TYPE_DISPLAY, StaticEventHandler);
-*/
 	}
 
 //////////////////////////////////////////////////////////////////////////

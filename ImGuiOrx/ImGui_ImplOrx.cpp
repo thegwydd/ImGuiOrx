@@ -17,19 +17,104 @@
 #endif
 #include <gl/GL.h>
 
+#include <vector>
+
 extern "C" {
 #include <orx.h>
 }
 
 
-static GLuint       g_FontTexture = 0;
+static orxBITMAP * g_FontTexture = 0;
+
+void ImGui_ImplOrx_Translate(orxVIEWPORT * pstViewport, orxFLOAT & x, orxFLOAT & y)
+    {
+    if (pstViewport != NULL)
+        {
+        orxVECTOR vScreenPosition = orxVECTOR_0;
+        orxVECTOR vWorldPosition = orxVECTOR_0;
+        orxRender_GetWorldPosition(&vScreenPosition, pstViewport, &vWorldPosition);
+
+        x += vWorldPosition.fX;
+        y += vWorldPosition.fY;
+        x = ceilf(((float)x) * /*m_fScale*/1);
+        y = ceilf(((float)y) * /*m_fScale*/1);
+        }
+    }
+
+//////////////////////////////////////////////////////////////////////////
+void ImGui_ImplOrx_SetDisplayVertex(orxDISPLAY_VERTEX * pstVertex, orxFLOAT x, orxFLOAT y, orxFLOAT u, orxFLOAT v, orxRGBA & color)
+    {
+    pstVertex->fX = x;
+    pstVertex->fY = y;
+    pstVertex->fU = u;
+    pstVertex->fV = v;
+
+    pstVertex->stRGBA = color;
+    }
+
+//////////////////////////////////////////////////////////////////////////
+void ImGui_ImplOrx_Render_CmdList(orxVIEWPORT * pstViewport, const ImDrawList * cmd_list, int fb_width, int fb_height)
+    {
+    const ImDrawVert * vtx_buffer = cmd_list->VtxBuffer.Data;
+    const ImDrawIdx * idx_buffer = cmd_list->IdxBuffer.Data;
+
+    int last_used_index = 0;
+    int num_vertices = cmd_list->IdxBuffer.size();
+
+    // orxDisplay_DrawMesh internally uses GL_TRIANGLE_STRIP so organize texture mapping for a triangle strip VBO
+    for (int cmd_i = 0; cmd_i < cmd_list->CmdBuffer.Size; cmd_i++)
+        {
+        const ImDrawCmd* pcmd = &cmd_list->CmdBuffer[cmd_i];
+        if (pcmd->UserCallback)
+            {
+            pcmd->UserCallback(cmd_list, pcmd);
+            }
+        else
+            {
+            /* build mesh vertex list */
+            std::vector<orxDISPLAY_VERTEX> vertexes;
+            vertexes.resize(pcmd->ElemCount);
+
+            for (unsigned int mv = 0; mv < pcmd->ElemCount; mv++)
+                {
+                int vertex_index = *(idx_buffer + mv);
+                ImDrawVert * cur_vtx_buffer = cmd_list->VtxBuffer.Data + vertex_index;
+                orxDISPLAY_VERTEX * pstVertex = &vertexes[mv];
+
+                pstVertex->stRGBA.u32RGBA = cur_vtx_buffer->col;
+                pstVertex->fX = cur_vtx_buffer->pos.x;
+                pstVertex->fY = cur_vtx_buffer->pos.y;
+
+                ImGui_ImplOrx_Translate(pstViewport, pstVertex->fX, pstVertex->fY);
+
+                pstVertex->fU = cur_vtx_buffer->uv.x;
+                pstVertex->fV = cur_vtx_buffer->uv.y;
+                }
+
+            orxBITMAP * pstBitmap = (orxBITMAP *)pcmd->TextureId;
+            orxDisplay_SetBitmapClipping(pstBitmap, (int)pcmd->ClipRect.x, (int)(fb_height - pcmd->ClipRect.w), (int)(pcmd->ClipRect.z - pcmd->ClipRect.x), (int)(pcmd->ClipRect.w - pcmd->ClipRect.y));
+
+            orxDisplay_DrawMesh(pstBitmap, orxDISPLAY_SMOOTHING_ON, orxDISPLAY_BLEND_MODE_ALPHA, pcmd->ElemCount, &vertexes[0]);
+            }
+
+        idx_buffer += pcmd->ElemCount;
+        }
+    }
+
 
 //////////////////////////////////////////////////////////////////////////
 // This is the main rendering function that you have to implement and provide to ImGui (via setting up 'RenderDrawListsFn' in the ImGuiIO structure)
 // If text or lines are blurry when integrating ImGui in your engine:
 // - in your Render function, try translating your projection matrix by (0.5f,0.5f) or (0.375f,0.375f)
-void ImGui_ImplOrx_RenderDrawLists(ImDrawData* draw_data)
+void ImGui_ImplOrx_Render(void * pvViewport, ImDrawData* draw_data)
 {
+    orxVIEWPORT * pstViewport = (orxVIEWPORT *)pvViewport;
+    /* Gets screen bitmap */
+    orxBITMAP * pstScreen = orxDisplay_GetScreenBitmap();
+
+    /* Restores screen as destination bitmap */
+    orxDisplay_SetDestinationBitmaps(&pstScreen, 1);
+
     // Avoid rendering when minimized, scale coordinates for retina displays (screen coordinates != framebuffer coordinates)
     ImGuiIO& io = ImGui::GetIO();
     int fb_width = (int)(io.DisplaySize.x * io.DisplayFramebufferScale.x);
@@ -38,75 +123,102 @@ void ImGui_ImplOrx_RenderDrawLists(ImDrawData* draw_data)
         return;
     draw_data->ScaleClipRects(io.DisplayFramebufferScale);
 
-    // We are using the OpenGL fixed pipeline to make the example code simpler to read!
-    // Setup render state: alpha-blending enabled, no face culling, no depth testing, scissor enabled, vertex/texcoord/color pointers.
-    GLint last_texture; glGetIntegerv(GL_TEXTURE_BINDING_2D, &last_texture);
-    GLint last_viewport[4]; glGetIntegerv(GL_VIEWPORT, last_viewport);
-    GLint last_scissor_box[4]; glGetIntegerv(GL_SCISSOR_BOX, last_scissor_box); 
-    glPushAttrib(GL_ENABLE_BIT | GL_COLOR_BUFFER_BIT | GL_TRANSFORM_BIT);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glDisable(GL_CULL_FACE);
-    glDisable(GL_DEPTH_TEST);
-    glEnable(GL_SCISSOR_TEST);
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-    glEnableClientState(GL_COLOR_ARRAY);
-    glEnable(GL_TEXTURE_2D);
-    //glUseProgram(0); // You may want this if using this code in an OpenGL 3+ context
-
-    // Setup viewport, orthographic projection matrix
-    glViewport(0, 0, (GLsizei)fb_width, (GLsizei)fb_height);
-    glMatrixMode(GL_PROJECTION);
-    glPushMatrix();
-    glLoadIdentity();
-    glOrtho(0.0f, io.DisplaySize.x, io.DisplaySize.y, 0.0f, -1.0f, +1.0f);
-    glMatrixMode(GL_MODELVIEW);
-    glPushMatrix();
-    glLoadIdentity();
+    /* Restores screen bitmap clipping */
+    orxDisplay_SetBitmapClipping(orxDisplay_GetScreenBitmap(), 0, 0, orxF2U(fb_width), orxF2U(fb_height));
 
     // Render command lists
-    #define OFFSETOF(TYPE, ELEMENT) ((size_t)&(((TYPE *)0)->ELEMENT))
     for (int n = 0; n < draw_data->CmdListsCount; n++)
-    {
-        const ImDrawList* cmd_list = draw_data->CmdLists[n];
-        const ImDrawVert* vtx_buffer = cmd_list->VtxBuffer.Data;
-        const ImDrawIdx* idx_buffer = cmd_list->IdxBuffer.Data;
-        glVertexPointer(2, GL_FLOAT, sizeof(ImDrawVert), (const GLvoid*)((const char*)vtx_buffer + OFFSETOF(ImDrawVert, pos)));
-        glTexCoordPointer(2, GL_FLOAT, sizeof(ImDrawVert), (const GLvoid*)((const char*)vtx_buffer + OFFSETOF(ImDrawVert, uv)));
-        glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(ImDrawVert), (const GLvoid*)((const char*)vtx_buffer + OFFSETOF(ImDrawVert, col)));
-
-        for (int cmd_i = 0; cmd_i < cmd_list->CmdBuffer.Size; cmd_i++)
         {
-            const ImDrawCmd* pcmd = &cmd_list->CmdBuffer[cmd_i];
-            if (pcmd->UserCallback)
-            {
-                pcmd->UserCallback(cmd_list, pcmd);
-            }
-            else
-            {
-                glBindTexture(GL_TEXTURE_2D, (GLuint)(intptr_t)pcmd->TextureId);
-                glScissor((int)pcmd->ClipRect.x, (int)(fb_height - pcmd->ClipRect.w), (int)(pcmd->ClipRect.z - pcmd->ClipRect.x), (int)(pcmd->ClipRect.w - pcmd->ClipRect.y));
-                glDrawElements(GL_TRIANGLES, (GLsizei)pcmd->ElemCount, sizeof(ImDrawIdx) == 2 ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT, idx_buffer);
-            }
-            idx_buffer += pcmd->ElemCount;
+        const ImDrawList * cmd_list = draw_data->CmdLists[n];
+        ImGui_ImplOrx_Render_CmdList(pstViewport, cmd_list, fb_width, fb_height);
         }
-    }
-    #undef OFFSETOF
-
-    // Restore modified state
-    glDisableClientState(GL_COLOR_ARRAY);
-    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-    glDisableClientState(GL_VERTEX_ARRAY);
-    glBindTexture(GL_TEXTURE_2D, (GLuint)last_texture);
-    glMatrixMode(GL_MODELVIEW);
-    glPopMatrix();
-    glMatrixMode(GL_PROJECTION);
-    glPopMatrix();
-    glPopAttrib();
-    glViewport(last_viewport[0], last_viewport[1], (GLsizei)last_viewport[2], (GLsizei)last_viewport[3]);
-    glScissor(last_scissor_box[0], last_scissor_box[1], (GLsizei)last_scissor_box[2], (GLsizei)last_scissor_box[3]);
 }
+
+
+
+// void ImGui_ImplOrx_Render(void * pvViewport, ImDrawData* draw_data)
+//     {
+//     orxVIEWPORT * pstViewport = (orxVIEWPORT *)pvViewport;
+//     /* Gets screen bitmap */
+//     orxBITMAP * pstScreen = orxDisplay_GetScreenBitmap();
+// 
+//     /* Restores screen as destination bitmap */
+//     orxDisplay_SetDestinationBitmaps(&pstScreen, 1);
+// 
+//     // Avoid rendering when minimized, scale coordinates for retina displays (screen coordinates != framebuffer coordinates)
+//     ImGuiIO& io = ImGui::GetIO();
+//     int fb_width = (int)(io.DisplaySize.x * io.DisplayFramebufferScale.x);
+//     int fb_height = (int)(io.DisplaySize.y * io.DisplayFramebufferScale.y);
+//     if (fb_width == 0 || fb_height == 0)
+//         return;
+//     draw_data->ScaleClipRects(io.DisplayFramebufferScale);
+// 
+//     /* Restores screen bitmap clipping */
+//     orxDisplay_SetBitmapClipping(orxDisplay_GetScreenBitmap(), 0, 0, orxF2U(fb_width), orxF2U(fb_height));
+// 
+//     // Render command lists
+//     for (int n = 0; n < draw_data->CmdListsCount; n++)
+//         {
+//         const ImDrawList * cmd_list = draw_data->CmdLists[n];
+//         const ImDrawVert * vtx_buffer = cmd_list->VtxBuffer.Data;
+//         const ImDrawIdx * idx_buffer = cmd_list->IdxBuffer.Data;
+// 
+//         // orxDisplay_DrawMesh internally uses GL_TRIANGLE_STRIP so organize texture mapping for a triangle strip VBO
+//         orxDISPLAY_VERTEX vertexes[4];
+//         orxRGBA color;
+//         color.u32RGBA = vtx_buffer->col;
+// 
+//         orxFLOAT left = vtx_buffer->pos.x;
+//         orxFLOAT bottom = vtx_buffer->pos.y;
+//         ImGui_ImplOrx_Translate(pstViewport, left, bottom);
+// 
+//         orxFLOAT u1 = vtx_buffer->uv.x;
+//         orxFLOAT v1 = vtx_buffer->uv.y;
+// 
+//         vtx_buffer++;
+// 
+//         orxFLOAT right = vtx_buffer->pos.x;
+//         orxFLOAT top = vtx_buffer->pos.y;
+// 
+//         ImGui_ImplOrx_Translate(pstViewport, right, top);
+// 
+//         orxFLOAT u2 = vtx_buffer->uv.x;
+//         orxFLOAT v2 = vtx_buffer->uv.y;
+// 
+//         ImGui_ImplOrx_SetDisplayVertex(&vertexes[0], left, bottom, u1, v2, color);
+//         ImGui_ImplOrx_SetDisplayVertex(&vertexes[1], left, top, u1, v1, color);
+//         ImGui_ImplOrx_SetDisplayVertex(&vertexes[2], right, bottom, u2, v2, color);
+//         ImGui_ImplOrx_SetDisplayVertex(&vertexes[3], right, top, u2, v1, color);
+//         /*
+//         glVertexPointer(2, GL_FLOAT, sizeof(ImDrawVert), (const GLvoid*)((const char*)vtx_buffer + OFFSETOF(ImDrawVert, pos)));
+//         glTexCoordPointer(2, GL_FLOAT, sizeof(ImDrawVert), (const GLvoid*)((const char*)vtx_buffer + OFFSETOF(ImDrawVert, uv)));
+//         glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(ImDrawVert), (const GLvoid*)((const char*)vtx_buffer + OFFSETOF(ImDrawVert, col)));
+//         */
+// 
+//         for (int cmd_i = 0; cmd_i < cmd_list->CmdBuffer.Size; cmd_i++)
+//             {
+//             const ImDrawCmd* pcmd = &cmd_list->CmdBuffer[cmd_i];
+//             if (pcmd->UserCallback)
+//                 {
+//                 pcmd->UserCallback(cmd_list, pcmd);
+//                 }
+//             else
+//                 {
+//                 orxBITMAP * pstBitmap = (orxBITMAP *)pcmd->TextureId;
+//                 orxDisplay_SetBitmapClipping(pstBitmap, (int)pcmd->ClipRect.x, (int)(fb_height - pcmd->ClipRect.w), (int)(pcmd->ClipRect.z - pcmd->ClipRect.x), (int)(pcmd->ClipRect.w - pcmd->ClipRect.y));
+//                 orxDisplay_DrawMesh(pstBitmap, orxDISPLAY_SMOOTHING_ON, orxDISPLAY_BLEND_MODE_ALPHA, 4, vertexes);
+//                 /*
+//                 glBindTexture(GL_TEXTURE_2D, (GLuint)(intptr_t)pcmd->TextureId);
+//                 glScissor((int)pcmd->ClipRect.x, (int)(fb_height - pcmd->ClipRect.w), (int)(pcmd->ClipRect.z - pcmd->ClipRect.x), (int)(pcmd->ClipRect.w - pcmd->ClipRect.y));
+//                 glDrawElements(GL_TRIANGLES, (GLsizei)pcmd->ElemCount, sizeof(ImDrawIdx) == 2 ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT, idx_buffer);
+//                 */
+//                 }
+//             idx_buffer += pcmd->ElemCount;
+//             }
+//         }
+// #undef OFFSETOF
+//     }
+
 
 //////////////////////////////////////////////////////////////////////////
 static const char* ImGui_ImplOrx_GetClipboardText(void* user_data)
@@ -165,38 +277,65 @@ void ImGui_ImplOrx_CharCallback(unsigned int c)
 }
 
 //////////////////////////////////////////////////////////////////////////
+orxBITMAP * InitFontTexture(orxU32 u32Width, orxU32 u32Height)
+    {
+    orxU32      u32Index;
+    orxTEXTURE *pstTexture;
+    orxBITMAP  *pstBitmap;
+    orxU8      *au8Data;
+    orxU32      u32BitmapSize;
+
+    // Creates background texture
+    pstBitmap = orxDisplay_CreateBitmap(u32Width, u32Height);
+    pstTexture = orxTexture_Create();
+    orxTexture_LinkBitmap(pstTexture, pstBitmap, "Texture");
+
+    u32BitmapSize = u32Width * u32Height * sizeof(orxRGBA);
+    // Allocates pixel buffer
+    au8Data = (orxU8 *)orxMemory_Allocate(u32BitmapSize, orxMEMORY_TYPE_VIDEO);
+
+    // For all pixels
+    for (u32Index = 0; u32Index < (u32BitmapSize / 4); u32Index+=4)
+        {
+        // Stores pixel channels
+        au8Data[u32Index] = au8Data[u32Index + 1] = au8Data[u32Index + 2] = 0x00;
+        au8Data[u32Index + 3] = 0xFF;
+        }
+
+    // Updates bitmap content
+    orxDisplay_SetBitmapData(pstBitmap, au8Data, u32BitmapSize);
+
+    // Frees pixel buffer
+    orxMemory_Free(au8Data);
+
+    return pstBitmap;
+    }
+
+//////////////////////////////////////////////////////////////////////////
 bool ImGui_ImplOrx_CreateDeviceObjects()
 {
     // Build texture atlas
     ImGuiIO& io = ImGui::GetIO();
     unsigned char* pixels;
     int width, height;
-    io.Fonts->GetTexDataAsRGBA32(&pixels, &width, &height);   // Load as RGBA 32-bits (75% of the memory is wasted, but default font is so small) because it is more likely to be compatible with user's existing shaders. If your ImTextureId represent a higher-level concept than just a GL texture id, consider calling GetTexDataAsAlpha8() instead to save on GPU memory.
 
-    // Upload texture to graphics system
-    GLint last_texture;
-    glGetIntegerv(GL_TEXTURE_BINDING_2D, &last_texture);
-    glGenTextures(1, &g_FontTexture);
-    glBindTexture(GL_TEXTURE_2D, g_FontTexture);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+    // Load as RGBA 32-bits (75% of the memory is wasted, but default font is so small) because it is more likely to be compatible with user's existing shaders. 
+    // If your ImTextureId represent a higher-level concept than just a GL texture id, consider calling GetTexDataAsAlpha8() instead to save on GPU memory.
+    io.Fonts->GetTexDataAsRGBA32(&pixels, &width, &height);
 
     // Store our identifier
-    io.Fonts->TexID = (void *)(intptr_t)g_FontTexture;
-
-    // Restore state
-    glBindTexture(GL_TEXTURE_2D, last_texture);
+    g_FontTexture = InitFontTexture(width, height);
+    io.Fonts->TexID = (void *)g_FontTexture;
 
     return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
-void    ImGui_ImplOrx_InvalidateDeviceObjects()
+void ImGui_ImplOrx_InvalidateDeviceObjects()
 {
     if (g_FontTexture)
     {
-        glDeleteTextures(1, &g_FontTexture);
+        orxDisplay_DeleteBitmap(g_FontTexture);
         ImGui::GetIO().Fonts->TexID = 0;
         g_FontTexture = 0;
     }
@@ -226,7 +365,7 @@ bool ImGui_ImplOrx_Init()
     io.KeyMap[ImGuiKey_Y] = orxKEYBOARD_KEY_Y;
     io.KeyMap[ImGuiKey_Z] = orxKEYBOARD_KEY_Z;
 
-    io.RenderDrawListsFn = ImGui_ImplOrx_RenderDrawLists;      // Alternatively you can set this to NULL and call ImGui::GetDrawData() after ImGui::Render() to get the same ImDrawData pointer.
+    io.RenderDrawListsFn = NULL/*ImGui_ImplOrx_RenderDrawLists*/;      // Alternatively you can set this to NULL and call ImGui::GetDrawData() after ImGui::Render() to get the same ImDrawData pointer.
     io.SetClipboardTextFn = ImGui_ImplOrx_SetClipboardText;
     io.GetClipboardTextFn = ImGui_ImplOrx_GetClipboardText;
     io.ClipboardUserData = /*g_Window*/NULL;

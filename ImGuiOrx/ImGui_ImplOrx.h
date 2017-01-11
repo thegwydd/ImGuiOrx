@@ -27,3 +27,5 @@ IMGUI_API void        ImGui_ImplOrx_MouseButtonCallback(int button, int action, 
 IMGUI_API void        ImGui_ImplOrx_ScrollCallback(double xoffset, double yoffset);
 IMGUI_API void        ImGui_ImplGlFw_KeyCallback(int key, int scancode, int action, int mods);
 IMGUI_API void        ImGui_ImplOrx_CharCallback(unsigned int c);
+
+IMGUI_API void        ImGui_ImplOrx_Render(void * pvViewport, ImDrawData* draw_data);

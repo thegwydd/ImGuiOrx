@@ -25,6 +25,8 @@ class ImGuiOrxTestApplication : public Scroll<ImGuiOrxTestApplication>
 		void				BindObjects();
 
 	private: // Overrides
+        //! Initializes Gui system
+        void				InitializeGuiSystem();
         //! Initializes ORX events to pass to input system
         void				InitializeEvents();
         //! Initializes the scene
