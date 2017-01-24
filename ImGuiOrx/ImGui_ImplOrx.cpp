@@ -27,18 +27,6 @@ extern "C" {
 static orxBITMAP * g_FontTexture = 0;
 
 //////////////////////////////////////////////////////////////////////////
-void ImGui_ImplOrx_SetDisplayVertex(orxDISPLAY_VERTEX * pstVertex, orxFLOAT x, orxFLOAT y, orxFLOAT u, orxFLOAT v, orxRGBA & color)
-    {
-    pstVertex->fX = x;
-    pstVertex->fY = y;
-    pstVertex->fU = u;
-    pstVertex->fV = v;
-
-    pstVertex->stRGBA = color;
-    }
-
-/*
-//////////////////////////////////////////////////////////////////////////
 void ImGui_ImplOrx_Render_CmdList(orxVIEWPORT * pstViewport, const ImDrawList * cmd_list, int fb_width, int fb_height)
     {
     const ImDrawVert * vtx_buffer = cmd_list->VtxBuffer.Data;
@@ -57,7 +45,7 @@ void ImGui_ImplOrx_Render_CmdList(orxVIEWPORT * pstViewport, const ImDrawList * 
             }
         else
             {
-            / * build mesh vertex list * /
+            // build mesh vertex list
             std::vector<orxDISPLAY_VERTEX> vertexes;
             vertexes.resize(pcmd->ElemCount);
 
@@ -71,7 +59,7 @@ void ImGui_ImplOrx_Render_CmdList(orxVIEWPORT * pstViewport, const ImDrawList * 
                 pstVertex->fX = cur_vtx_buffer->pos.x;
                 pstVertex->fY = cur_vtx_buffer->pos.y;
 
-                ImGui_ImplOrx_Translate(pstViewport, pstVertex->fX, pstVertex->fY);
+//                ImGui_ImplOrx_Translate(pstViewport, pstVertex->fX, pstVertex->fY);
 
                 pstVertex->fU = cur_vtx_buffer->uv.x;
                 pstVertex->fV = cur_vtx_buffer->uv.y;
@@ -80,7 +68,8 @@ void ImGui_ImplOrx_Render_CmdList(orxVIEWPORT * pstViewport, const ImDrawList * 
             orxBITMAP * pstBitmap = (orxBITMAP *)pcmd->TextureId;
             orxDisplay_SetBitmapClipping(pstBitmap, (int)pcmd->ClipRect.x, (int)(fb_height - pcmd->ClipRect.w), (int)(pcmd->ClipRect.z - pcmd->ClipRect.x), (int)(pcmd->ClipRect.w - pcmd->ClipRect.y));
 
-            orxDisplay_DrawMesh(pstBitmap, orxDISPLAY_SMOOTHING_ON, orxDISPLAY_BLEND_MODE_ALPHA, pcmd->ElemCount, &vertexes[0]);
+//            orxDisplay_DrawMesh(pstBitmap, orxDISPLAY_SMOOTHING_ON, orxDISPLAY_BLEND_MODE_ALPHA, pcmd->ElemCount, &vertexes[0]);
+            orxDisplay_DrawCustomMesh(pstBitmap, orxDISPLAY_SMOOTHING_ON, orxDISPLAY_BLEND_MODE_ALPHA, orxDISPLAY_DRAW_MODE_TRIANGLES, pcmd->ElemCount, &vertexes[0]);
             }
 
         idx_buffer += pcmd->ElemCount;
@@ -95,10 +84,10 @@ void ImGui_ImplOrx_Render_CmdList(orxVIEWPORT * pstViewport, const ImDrawList * 
 void ImGui_ImplOrx_Render(void * pvViewport, ImDrawData* draw_data)
 {
     orxVIEWPORT * pstViewport = (orxVIEWPORT *)pvViewport;
-    / * Gets screen bitmap * /
+    // Gets screen bitmap
     orxBITMAP * pstScreen = orxDisplay_GetScreenBitmap();
 
-    / * Restores screen as destination bitmap * /
+    // Restores screen as destination bitmap
     orxDisplay_SetDestinationBitmaps(&pstScreen, 1);
 
     // Avoid rendering when minimized, scale coordinates for retina displays (screen coordinates != framebuffer coordinates)
@@ -109,7 +98,7 @@ void ImGui_ImplOrx_Render(void * pvViewport, ImDrawData* draw_data)
         return;
     draw_data->ScaleClipRects(io.DisplayFramebufferScale);
 
-    / * Restores screen bitmap clipping * /
+    // Restores screen bitmap clipping
     orxDisplay_SetBitmapClipping(orxDisplay_GetScreenBitmap(), 0, 0, orxF2U(fb_width), orxF2U(fb_height));
 
     // Render command lists
@@ -119,10 +108,10 @@ void ImGui_ImplOrx_Render(void * pvViewport, ImDrawData* draw_data)
         ImGui_ImplOrx_Render_CmdList(pstViewport, cmd_list, fb_width, fb_height);
         }
 }
-*/
 
 
 
+/*
 void ImGui_ImplOrx_Render(void * pvViewport, ImDrawData* draw_data)
     {
     orxVIEWPORT * pstViewport = (orxVIEWPORT *)pvViewport;
@@ -180,6 +169,7 @@ void ImGui_ImplOrx_Render(void * pvViewport, ImDrawData* draw_data)
     glScissor(last_scissor_box[0], last_scissor_box[1], (GLsizei)last_scissor_box[2], (GLsizei)last_scissor_box[3]);
     }
 
+*/
 
 //////////////////////////////////////////////////////////////////////////
 static const char* ImGui_ImplOrx_GetClipboardText(void* user_data)

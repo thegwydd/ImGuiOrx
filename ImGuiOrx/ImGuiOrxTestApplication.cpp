@@ -9,7 +9,7 @@
 #include "ImGui_ImplOrx.h"
 
 
-//#ifndef __orxMSVC__
+#ifndef __orxMSVC__
 //////////////////////////////////////////////////////////////////////////
 int main(int argc, char **argv)
     {
@@ -17,17 +17,16 @@ int main(int argc, char **argv)
     ImGuiOrxTestApplication::GetInstance().Execute(argc, argv);
     return EXIT_SUCCESS;
     }
-//#else  // __orxMSVC__
-// Here's an example for a console-less program under windows with visual studio
-// int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
-// 	{
-// 	/* Inits and executes orx */
-// 	ImGuiOrxTestApplication::GetInstance().Execute();
-// 
-// 	// Done!
-// 	return EXIT_SUCCESS;
-// 	}
-//#endif // __orxMSVC__
+#else  // __orxMSVC__
+ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
+ 	{
+ 	/* Inits and executes orx */
+ 	ImGuiOrxTestApplication::GetInstance().Execute();
+ 
+ 	// Done!
+ 	return EXIT_SUCCESS;
+ 	}
+#endif // __orxMSVC__
 
 
 

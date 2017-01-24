@@ -98,7 +98,7 @@
       <SDLCheck>true</SDLCheck>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>orxd.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
@@ -116,7 +116,7 @@ copy "$(ProjectDir)\*.ini" "$(TargetDir)"</Command>
       <SDLCheck>true</SDLCheck>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>orxd.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
@@ -136,7 +136,7 @@ copy "$(ProjectDir)\*.ini" "$(TargetDir)"</Command>
       <SDLCheck>true</SDLCheck>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -158,7 +158,7 @@ copy "$(ProjectDir)\*.ini" "$(TargetDir)"</Command>
       <SDLCheck>true</SDLCheck>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
