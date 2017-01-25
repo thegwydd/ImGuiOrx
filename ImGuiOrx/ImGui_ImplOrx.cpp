@@ -45,31 +45,26 @@ void ImGui_ImplOrx_Render_CmdList(orxVIEWPORT * pstViewport, const ImDrawList * 
             }
         else
             {
+            int numVertexes = cmd_list->VtxBuffer.size();
             // build mesh vertex list
-            std::vector<orxDISPLAY_VERTEX> vertexes;
-            vertexes.resize(pcmd->ElemCount);
+            std::vector<orxDISPLAY_VERTEX> vertexes(numVertexes);
 
-            for (unsigned int mv = 0; mv < pcmd->ElemCount; mv++)
+            // build the vertex list in Orx format
+            for (int vertex_index = 0; vertex_index < numVertexes; ++vertex_index)
                 {
-                int vertex_index = *(idx_buffer + mv);
                 ImDrawVert * cur_vtx_buffer = cmd_list->VtxBuffer.Data + vertex_index;
-                orxDISPLAY_VERTEX * pstVertex = &vertexes[mv];
+                orxDISPLAY_VERTEX * pstVertex = &vertexes[vertex_index];
 
                 pstVertex->stRGBA.u32RGBA = cur_vtx_buffer->col;
                 pstVertex->fX = cur_vtx_buffer->pos.x;
                 pstVertex->fY = cur_vtx_buffer->pos.y;
-
-//                ImGui_ImplOrx_Translate(pstViewport, pstVertex->fX, pstVertex->fY);
-
                 pstVertex->fU = cur_vtx_buffer->uv.x;
                 pstVertex->fV = cur_vtx_buffer->uv.y;
                 }
 
             orxBITMAP * pstBitmap = (orxBITMAP *)pcmd->TextureId;
             orxDisplay_SetBitmapClipping(pstBitmap, (int)pcmd->ClipRect.x, (int)(fb_height - pcmd->ClipRect.w), (int)(pcmd->ClipRect.z - pcmd->ClipRect.x), (int)(pcmd->ClipRect.w - pcmd->ClipRect.y));
-
-//            orxDisplay_DrawMesh(pstBitmap, orxDISPLAY_SMOOTHING_ON, orxDISPLAY_BLEND_MODE_ALPHA, pcmd->ElemCount, &vertexes[0]);
-            orxDisplay_DrawCustomMesh(pstBitmap, orxDISPLAY_SMOOTHING_ON, orxDISPLAY_BLEND_MODE_ALPHA, orxDISPLAY_DRAW_MODE_TRIANGLES, pcmd->ElemCount, &vertexes[0]);
+            orxDisplay_DrawCustomMesh(pstBitmap, orxDISPLAY_SMOOTHING_ON, orxDISPLAY_BLEND_MODE_ALPHA, orxDISPLAY_DRAW_MODE_TRIANGLES, numVertexes, &vertexes[0], idx_buffer, pcmd->ElemCount);
             }
 
         idx_buffer += pcmd->ElemCount;

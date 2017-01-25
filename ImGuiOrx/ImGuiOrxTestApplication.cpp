@@ -22,7 +22,7 @@ int main(int argc, char **argv)
  	{
  	/* Inits and executes orx */
  	ImGuiOrxTestApplication::GetInstance().Execute();
- 
+
  	// Done!
  	return EXIT_SUCCESS;
  	}
