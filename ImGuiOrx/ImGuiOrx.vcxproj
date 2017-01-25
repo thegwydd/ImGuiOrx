@@ -191,7 +191,9 @@ copy "$(ProjectDir)\*.ini" "$(TargetDir)"</Command>
     <ClCompile Include="ImGui_ImplOrx.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="ImGuiOrx.ini" />
+    <None Include="ImGuiOrx.ini">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
     <None Include="Scroll\Scroll.inl" />
     <None Include="Scroll\ScrollBase.inl" />
     <None Include="Scroll\ScrollEd.inl" />

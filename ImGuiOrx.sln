@@ -16,6 +16,9 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "orxLIB", "..\orx\code\build\windows\vs2015\orxLIB.vcxproj", "{56B0739A-2B9B-4848-B8AF-C4A795214D44}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "orx", "..\orx\code\build\windows\vs2015\orx.vcxproj", "{1C65864E-74AD-D849-ADE7-02411DAEC830}"
+	ProjectSection(ProjectDependencies) = postProject
+		{56B0739A-2B9B-4848-B8AF-C4A795214D44} = {56B0739A-2B9B-4848-B8AF-C4A795214D44}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

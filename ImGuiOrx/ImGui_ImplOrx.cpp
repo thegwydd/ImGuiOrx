@@ -21,7 +21,7 @@
 
 extern "C" {
 #include <orx.h>
-}
+    }
 
 
 static orxBITMAP * g_FontTexture = 0;
@@ -35,7 +35,6 @@ void ImGui_ImplOrx_Render_CmdList(orxVIEWPORT * pstViewport, const ImDrawList * 
     int last_used_index = 0;
     int num_vertices = cmd_list->IdxBuffer.size();
 
-    // orxDisplay_DrawMesh internally uses GL_TRIANGLE_STRIP so organize texture mapping for a triangle strip VBO
     for (int cmd_i = 0; cmd_i < cmd_list->CmdBuffer.Size; cmd_i++)
         {
         const ImDrawCmd* pcmd = &cmd_list->CmdBuffer[cmd_i];
@@ -46,36 +45,54 @@ void ImGui_ImplOrx_Render_CmdList(orxVIEWPORT * pstViewport, const ImDrawList * 
         else
             {
             int numVertexes = cmd_list->VtxBuffer.size();
-            // build mesh vertex list
-            std::vector<orxDISPLAY_VERTEX> vertexes(numVertexes);
 
-            // build the vertex list in Orx format
-            for (int vertex_index = 0; vertex_index < numVertexes; ++vertex_index)
+            orxDISPLAY_VERTEX * pVertexes = NULL;
+            std::vector<orxDISPLAY_VERTEX> vertexes;
+            if (sizeof(ImDrawVert) != sizeof(orxDISPLAY_VERTEX))
                 {
-                ImDrawVert * cur_vtx_buffer = cmd_list->VtxBuffer.Data + vertex_index;
-                orxDISPLAY_VERTEX * pstVertex = &vertexes[vertex_index];
+                vertexes.resize(numVertexes);
+                // build the vertex list in Orx format
+                for (int vertex_index = 0; vertex_index < numVertexes; ++vertex_index)
+                    {
+                    ImDrawVert * cur_vtx_buffer = cmd_list->VtxBuffer.Data + vertex_index;
+                    orxDISPLAY_VERTEX * pstVertex = &vertexes[vertex_index];
 
-                pstVertex->stRGBA.u32RGBA = cur_vtx_buffer->col;
-                pstVertex->fX = cur_vtx_buffer->pos.x;
-                pstVertex->fY = cur_vtx_buffer->pos.y;
-                pstVertex->fU = cur_vtx_buffer->uv.x;
-                pstVertex->fV = cur_vtx_buffer->uv.y;
+                    pstVertex->stRGBA.u32RGBA = cur_vtx_buffer->col;
+                    pstVertex->fX = cur_vtx_buffer->pos.x;
+                    pstVertex->fY = cur_vtx_buffer->pos.y;
+                    pstVertex->fU = cur_vtx_buffer->uv.x;
+                    pstVertex->fV = cur_vtx_buffer->uv.y;
+                    }
+
+                pVertexes = &vertexes[0];
                 }
+             else
+                 pVertexes = (orxDISPLAY_VERTEX *)vtx_buffer;
+
+            orxU16 * pIndexes = NULL;
+            std::vector<orxU16> indexes;
+            if (sizeof(ImDrawIdx) != 2)
+                {
+                indexes.resize(cmd_list->IdxBuffer.size());
+
+                for (size_t a=0; a<indexes.size(); a++)
+                    indexes[a] = (orxU16)idx_buffer[a];
+
+                pIndexes = &indexes[0];
+                }
+            else
+                pIndexes = (orxU16 *)idx_buffer;
 
             orxBITMAP * pstBitmap = (orxBITMAP *)pcmd->TextureId;
             orxDisplay_SetBitmapClipping(pstBitmap, (int)pcmd->ClipRect.x, (int)(fb_height - pcmd->ClipRect.w), (int)(pcmd->ClipRect.z - pcmd->ClipRect.x), (int)(pcmd->ClipRect.w - pcmd->ClipRect.y));
-            orxDisplay_DrawCustomMesh(pstBitmap, orxDISPLAY_SMOOTHING_ON, orxDISPLAY_BLEND_MODE_ALPHA, orxDISPLAY_DRAW_MODE_TRIANGLES, numVertexes, &vertexes[0], idx_buffer, pcmd->ElemCount);
+            orxDisplay_DrawCustomMesh(pstBitmap, orxDISPLAY_SMOOTHING_ON, orxDISPLAY_BLEND_MODE_ALPHA, orxDISPLAY_DRAW_MODE_TRIANGLES, numVertexes, pVertexes, pIndexes, pcmd->ElemCount);
             }
 
         idx_buffer += pcmd->ElemCount;
         }
     }
 
-
 //////////////////////////////////////////////////////////////////////////
-// This is the main rendering function that you have to implement and provide to ImGui (via setting up 'RenderDrawListsFn' in the ImGuiIO structure)
-// If text or lines are blurry when integrating ImGui in your engine:
-// - in your Render function, try translating your projection matrix by (0.5f,0.5f) or (0.375f,0.375f)
 void ImGui_ImplOrx_Render(void * pvViewport, ImDrawData* draw_data)
 {
     orxVIEWPORT * pstViewport = (orxVIEWPORT *)pvViewport;
@@ -104,9 +121,8 @@ void ImGui_ImplOrx_Render(void * pvViewport, ImDrawData* draw_data)
         }
 }
 
-
-
 /*
+//////////////////////////////////////////////////////////////////////////
 void ImGui_ImplOrx_Render(void * pvViewport, ImDrawData* draw_data)
     {
     orxVIEWPORT * pstViewport = (orxVIEWPORT *)pvViewport;
@@ -163,7 +179,6 @@ void ImGui_ImplOrx_Render(void * pvViewport, ImDrawData* draw_data)
     glBindTexture(GL_TEXTURE_2D, (GLuint)last_texture);
     glScissor(last_scissor_box[0], last_scissor_box[1], (GLsizei)last_scissor_box[2], (GLsizei)last_scissor_box[3]);
     }
-
 */
 
 //////////////////////////////////////////////////////////////////////////
@@ -223,36 +238,28 @@ void ImGui_ImplOrx_CharCallback(unsigned int c)
 }
 
 //////////////////////////////////////////////////////////////////////////
-orxBITMAP * InitFontTexture(orxU32 u32Width, orxU32 u32Height)
+orxBITMAP * InitFontTexture(ImGuiIO & io)
     {
-    orxU32      u32Index;
     orxTEXTURE *pstTexture;
     orxBITMAP  *pstBitmap;
-    orxU8      *au8Data;
     orxU32      u32BitmapSize;
+    
+    unsigned char* pixels;
+    int u32Width, u32Height;
 
+    // Load as RGBA 32-bits (75% of the memory is wasted, but default font is so small) because it is more likely to be compatible with user's existing shaders. 
+    // If your ImTextureId represent a higher-level concept than just a GL texture id, consider calling GetTexDataAsAlpha8() instead to save on GPU memory.
+    io.Fonts->GetTexDataAsRGBA32(&pixels, &u32Width, &u32Height);
+    
     // Creates background texture
     pstBitmap = orxDisplay_CreateBitmap(u32Width, u32Height);
     pstTexture = orxTexture_Create();
     orxTexture_LinkBitmap(pstTexture, pstBitmap, "Texture", orxTRUE);
 
     u32BitmapSize = u32Width * u32Height * sizeof(orxRGBA);
-    // Allocates pixel buffer
-    au8Data = (orxU8 *)orxMemory_Allocate(u32BitmapSize, orxMEMORY_TYPE_VIDEO);
-
-    // For all pixels
-    for (u32Index = 0; u32Index < (u32BitmapSize / 4); u32Index+=4)
-        {
-        // Stores pixel channels
-        au8Data[u32Index] = au8Data[u32Index + 1] = au8Data[u32Index + 2] = 0x00;
-        au8Data[u32Index + 3] = 0xFF;
-        }
 
     // Updates bitmap content
-    orxDisplay_SetBitmapData(pstBitmap, au8Data, u32BitmapSize);
-
-    // Frees pixel buffer
-    orxMemory_Free(au8Data);
+    orxDisplay_SetBitmapData(pstBitmap, pixels, u32BitmapSize);
 
     return pstBitmap;
     }
@@ -262,15 +269,9 @@ bool ImGui_ImplOrx_CreateDeviceObjects()
 {
     // Build texture atlas
     ImGuiIO& io = ImGui::GetIO();
-    unsigned char* pixels;
-    int width, height;
-
-    // Load as RGBA 32-bits (75% of the memory is wasted, but default font is so small) because it is more likely to be compatible with user's existing shaders. 
-    // If your ImTextureId represent a higher-level concept than just a GL texture id, consider calling GetTexDataAsAlpha8() instead to save on GPU memory.
-    io.Fonts->GetTexDataAsRGBA32(&pixels, &width, &height);
 
     // Store our identifier
-    g_FontTexture = InitFontTexture(width, height);
+    g_FontTexture = InitFontTexture(io);
     io.Fonts->TexID = (void *)g_FontTexture;
 
     return true;
