@@ -48,10 +48,15 @@ static float                            g_MouseWheel = 0.0f;
 #define MAX_IMGUI_MOUSE_BUTTONS         5
 static MouseButtonState                 g_ButtonStates[MAX_IMGUI_MOUSE_BUTTONS];
 
+orxCLOCK *                              pstMainClock;
+
 //! Updates mouse state
 static void UpdateMouse(ImGuiIO & io);
 //! Updates keyboard state
 static void UpdateKeyboard(ImGuiIO & io);
+//! Updates mouse wheel state
+static void orxFASTCALL MouseWheelUpdate(const orxCLOCK_INFO *_pstClockInfo, void *_pContext);
+
 
 //////////////////////////////////////////////////////////////////////////
 void ImGui_ImplOrx_Render(void * pvViewport, ImDrawData* draw_data)
@@ -234,6 +239,9 @@ bool ImGui_ImplOrx_Init()
     g_ButtonStates[3] = { orxMOUSE_BUTTON_EXTRA_1	, 3		, false };
     g_ButtonStates[4] = { orxMOUSE_BUTTON_EXTRA_2	, 4		, false };
 
+    pstMainClock = orxClock_FindFirst(orx2F(-1.0f), orxCLOCK_TYPE_CORE);
+    if (pstMainClock != orxNULL)
+        orxClock_Register(pstMainClock, MouseWheelUpdate, orxNULL, orxMODULE_ID_INPUT, orxCLOCK_PRIORITY_HIGH);
 
 #ifdef _WIN32
     io.ImeWindowHandle = /*glfwGetWin32Window(g_Window)*/NULL;
@@ -245,6 +253,9 @@ bool ImGui_ImplOrx_Init()
 //////////////////////////////////////////////////////////////////////////
 void ImGui_ImplOrx_Shutdown()
 {
+    if (pstMainClock != orxNULL)
+        orxClock_Unregister(pstMainClock, MouseWheelUpdate);
+
     ImGui_ImplOrx_InvalidateDeviceObjects();
     ImGui::Shutdown();
 }
@@ -279,6 +290,14 @@ void ImGui_ImplOrx_NewFrame()
 }
 
 //////////////////////////////////////////////////////////////////////////
+static void orxFASTCALL MouseWheelUpdate(const orxCLOCK_INFO *_pstClockInfo, void *_pContext)
+    {
+    orxFLOAT wheel_delta = orxMouse_GetWheelDelta();
+    if (wheel_delta != orxFLOAT_0)
+        ImGui::GetIO().MouseWheel = orxMouse_GetWheelDelta();
+    }
+
+//////////////////////////////////////////////////////////////////////////
 void UpdateMouse(ImGuiIO & io)
     {
     // Get current mouse position
@@ -286,12 +305,8 @@ void UpdateMouse(ImGuiIO & io)
     orxMouse_GetPosition(&pos);
     io.MousePos = ImVec2(pos.fX, pos.fY);
 
-    // get delta from last orxMouse_GetPosition call
-    orxVECTOR delta;
-    orxMouse_GetMoveDelta(&delta);
-
     // test the wheel
-//    if ((state.m_Button == orxMOUSE_BUTTON_WHEEL_UP) || (state.m_Button == orxMOUSE_BUTTON_WHEEL_DOWN))
+    if (orxMouse_IsButtonPressed(orxMOUSE_BUTTON_WHEEL_UP) || orxMouse_IsButtonPressed(orxMOUSE_BUTTON_WHEEL_DOWN))
         io.MouseWheel = orxMouse_GetWheelDelta();
 
     // poll for special keys
@@ -324,5 +339,7 @@ void UpdateKeyboard(ImGuiIO & io)
     io.KeyShift = io.KeysDown[orxKEYBOARD_KEY_LSHIFT] || io.KeysDown[orxKEYBOARD_KEY_RSHIFT];
     io.KeyAlt = io.KeysDown[orxKEYBOARD_KEY_LALT] || io.KeysDown[orxKEYBOARD_KEY_RALT];
     io.KeySuper = io.KeysDown[orxKEYBOARD_KEY_LSYSTEM] || io.KeysDown[orxKEYBOARD_KEY_RSYSTEM];
+
+    io.AddInputCharactersUTF8(orxKeyboard_ReadString());
     }
 
