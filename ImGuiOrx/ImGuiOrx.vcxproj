@@ -104,7 +104,9 @@
     </Link>
     <PostBuildEvent>
       <Command>copy /Y "$(ORX_PATH)\code\lib\dynamic\*.dll" "$(TargetDir)"
-copy "$(ProjectDir)\*.ini" "$(TargetDir)"</Command>
+copy "$(ProjectDir)\*.ini" "$(TargetDir)"
+xcopy /y /i $(ProjectDir)\data\*.* $(TargetDir)
+</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -122,7 +124,9 @@ copy "$(ProjectDir)\*.ini" "$(TargetDir)"</Command>
     </Link>
     <PostBuildEvent>
       <Command>copy /Y "$(ORX_PATH)\code\lib\dynamic\*.dll" "$(TargetDir)"
-copy "$(ProjectDir)\*.ini" "$(TargetDir)"</Command>
+copy "$(ProjectDir)\*.ini" "$(TargetDir)"
+xcopy /y /i $(ProjectDir)\data\*.* $(TargetDir)
+</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -144,7 +148,9 @@ copy "$(ProjectDir)\*.ini" "$(TargetDir)"</Command>
     </Link>
     <PostBuildEvent>
       <Command>copy /Y "$(ORX_PATH)\code\lib\dynamic\*.dll" "$(TargetDir)"
-copy "$(ProjectDir)\*.ini" "$(TargetDir)"</Command>
+copy "$(ProjectDir)\*.ini" "$(TargetDir)"
+xcopy /y /i $(ProjectDir)\data\*.* $(TargetDir)
+</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -166,10 +172,14 @@ copy "$(ProjectDir)\*.ini" "$(TargetDir)"</Command>
     </Link>
     <PostBuildEvent>
       <Command>copy /Y "$(ORX_PATH)\code\lib\dynamic\*.dll" "$(TargetDir)"
-copy "$(ProjectDir)\*.ini" "$(TargetDir)"</Command>
+copy "$(ProjectDir)\*.ini" "$(TargetDir)"
+xcopy /y /i $(ProjectDir)\data\*.* $(TargetDir)
+</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="EnemyBug.h" />
+    <ClInclude Include="Hero.h" />
     <ClInclude Include="ImGuiOrxTestApplication.h" />
     <ClInclude Include="ImGui\imconfig.h" />
     <ClInclude Include="ImGui\imgui.h" />
@@ -182,13 +192,19 @@ copy "$(ProjectDir)\*.ini" "$(TargetDir)"</Command>
     <ClInclude Include="Scroll\ScrollBase.h" />
     <ClInclude Include="Scroll\ScrollEd.h" />
     <ClInclude Include="Scroll\ScrollObject.h" />
+    <ClInclude Include="Soldier.h" />
+    <ClInclude Include="Walls.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="EnemyBug.cpp" />
+    <ClCompile Include="Hero.cpp" />
     <ClCompile Include="ImGuiOrxTestApplication.cpp" />
     <ClCompile Include="ImGui\imgui.cpp" />
     <ClCompile Include="ImGui\imgui_demo.cpp" />
     <ClCompile Include="ImGui\imgui_draw.cpp" />
     <ClCompile Include="ImGui_ImplOrx.cpp" />
+    <ClCompile Include="Soldier.cpp" />
+    <ClCompile Include="Walls.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ImGuiOrx.ini">

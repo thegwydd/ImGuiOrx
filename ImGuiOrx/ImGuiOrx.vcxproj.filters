@@ -46,6 +46,10 @@
       <Filter>ImGui</Filter>
     </ClInclude>
     <ClInclude Include="ImGui_ImplOrx.h" />
+    <ClInclude Include="EnemyBug.h" />
+    <ClInclude Include="Hero.h" />
+    <ClInclude Include="Soldier.h" />
+    <ClInclude Include="Walls.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ImGuiOrxTestApplication.cpp">
@@ -61,6 +65,10 @@
       <Filter>ImGui</Filter>
     </ClCompile>
     <ClCompile Include="ImGui_ImplOrx.cpp" />
+    <ClCompile Include="EnemyBug.cpp" />
+    <ClCompile Include="Hero.cpp" />
+    <ClCompile Include="Soldier.cpp" />
+    <ClCompile Include="Walls.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Scroll\Scroll.inl">

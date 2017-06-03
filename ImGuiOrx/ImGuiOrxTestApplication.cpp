@@ -8,6 +8,11 @@
 
 #include "ImGui_ImplOrx.h"
 
+#include "EnemyBug.h"
+#include "Hero.h"
+#include "Soldier.h"
+#include "Walls.h"
+
 
 #ifndef __orxMSVC__
 //////////////////////////////////////////////////////////////////////////
@@ -41,7 +46,10 @@ orxSTATUS orxFASTCALL ImGuiOrxTestApplication::StaticEventHandler(const orxEVENT
 orxSTATUS ImGuiOrxTestApplication::Init ()
 	{
 	orxSTATUS result = orxSTATUS_SUCCESS;
-    
+ 
+    m_CurrentScene = nullptr;
+    m_Soldier = nullptr;
+
     InitializeGuiSystem();
     InitializeEvents();
     BindObjects();
@@ -50,6 +58,9 @@ orxSTATUS ImGuiOrxTestApplication::Init ()
 	return result;
 	}
 
+bool show_test_window = true;
+bool show_another_window = false;
+
 //////////////////////////////////////////////////////////////////////////
 orxSTATUS ImGuiOrxTestApplication::Run ()
 	{
@@ -57,8 +68,6 @@ orxSTATUS ImGuiOrxTestApplication::Run ()
 
     ImGui_ImplOrx_NewFrame();
 
-    bool show_test_window = true;
-    bool show_another_window = false;
     ImVec4 clear_color = ImColor(114, 144, 154);
 
     // 1. Show a simple window
@@ -74,6 +83,7 @@ orxSTATUS ImGuiOrxTestApplication::Run ()
     // 2. Show another simple window, this time using an explicit Begin/End pair
     if (show_another_window)
         {
+        ImGui::SetNextWindowPos(ImVec2());
         ImGui::SetNextWindowSize(ImVec2(200, 100), ImGuiSetCond_FirstUseEver);
         ImGui::Begin("Another Window", &show_another_window);
         ImGui::Text("Hello");
@@ -116,7 +126,19 @@ void ImGuiOrxTestApplication::ResizeViewport()
     {
     orxFLOAT scr_w, scr_h;
     orxDisplay_GetScreenSize(&scr_w, &scr_h);
-    orxViewport_SetSize(GetMainViewport(), scr_w, scr_h);
+
+    orxFLOAT vwp_w, vwp_h;
+    orxViewport_GetSize(GetMainViewport(), &vwp_w, &vwp_h);
+
+    orxAABOX frustum;
+    orxCamera_GetFrustum(GetMainCamera(), &frustum);
+    
+    orxVECTOR cam_pos;
+    orxCamera_GetPosition(GetMainCamera(), &cam_pos);
+    orxCamera_SetFrustum(GetMainCamera(), vwp_w, vwp_h, frustum.vTL.fZ, frustum.vBR.fZ);
+    orxCamera_SetPosition(GetMainCamera(), &cam_pos);
+
+    orxDEBUG_PRINT(orxDEBUG_LEVEL_LOG, "Viewport Size : %f, %f", vwp_w, vwp_h);
     }
 
 //////////////////////////////////////////////////////////////////////////
@@ -150,10 +172,54 @@ void ImGuiOrxTestApplication::InitializeEvents()
 //////////////////////////////////////////////////////////////////////////
 void ImGuiOrxTestApplication::InitializeScene()
 	{
-	}
+    // create the scene
+    orxConfig_Load("ImGuiOrx.ini");
+    orxConfig_Load("Level1.ini");
+
+    m_CurrentScene = CreateObject("Walls");
+
+    // create objects from level1
+    m_Soldier = CreateObject("Soldier");
+   
+    // an enemies of course...
+    for (orxU32 i = 0; i < 5; i++)
+        {
+        ScrollObject * pObj = CreateObject("O-EnemyBug");
+        const orxCHAR * pszName = orxObject_GetName(pObj->GetOrxObject());
+        }
+    }
 
 //////////////////////////////////////////////////////////////////////////
 void ImGuiOrxTestApplication::BindObjects()
 	{
-	}
+    ScrollBindObject<EnemyBug>("O-EnemyBug");
+    ScrollBindObject<Hero>("O-Hero");
+    ScrollBindObject<Soldier>("Soldier");
+    ScrollBindObject<Walls>("Walls");
+    }
 
+//////////////////////////////////////////////////////////////////////////
+void ImGuiOrxTestApplication::PrintSections()
+    {
+    orxU32 u32SectionCount = orxConfig_GetSectionCounter();
+    for (orxU32 u32SectionIndex = 0; u32SectionIndex < u32SectionCount; u32SectionIndex++)
+        {
+        const orxCHAR * strCurrentSection = orxConfig_GetSection(u32SectionIndex);
+        const orxCHAR * strCurrentSectionOrigin = orxConfig_GetOrigin(strCurrentSection);
+
+        orxConfig_PushSection(strCurrentSection);
+
+        orxU32 u32KeyCount = orxConfig_GetKeyCounter();
+        for (orxU32 u32KeyIndex = 0; u32KeyIndex < u32KeyCount; u32KeyIndex++)
+            {
+            const orxCHAR * strCurrentKey = orxConfig_GetKey(u32KeyIndex);
+            if (orxConfig_IsInheritedValue(strCurrentKey) == orxTRUE)
+                {
+                const orxCHAR * strCurrentKeyParent = orxConfig_GetValueSource(strCurrentKey);
+                }
+            }
+
+        orxConfig_PopSection();
+
+        }
+    }

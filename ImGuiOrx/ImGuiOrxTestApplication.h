@@ -34,9 +34,14 @@ class ImGuiOrxTestApplication : public Scroll<ImGuiOrxTestApplication>
         void				InitializeScene();
         //! Main event handler
         orxSTATUS			HandleOrxEvent(const orxEVENT *_pstEvent);
-        // Resizes the viewport
+        //! Resizes the viewport
         void                ResizeViewport();
-        
+        //! Prints all sections
+        void                PrintSections();
+
+    private:
+        ScrollObject *		m_CurrentScene;
+        ScrollObject *		m_Soldier;
 
 	private: // Statics
 		static orxSTATUS orxFASTCALL StaticEventHandler(const orxEVENT *_pstEvent);

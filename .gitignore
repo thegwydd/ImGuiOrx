@@ -6,3 +6,5 @@ ImGuiOrx/Release/*
 ImGuiOrx/x64/*
 *.pdb
 *.VC.db
+.vs/ImGuiOrx/v14/*
+*.opendb
