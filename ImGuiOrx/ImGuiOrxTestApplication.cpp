@@ -33,9 +33,6 @@ int main(int argc, char **argv)
  	}
 #endif // __orxMSVC__
 
-
-
-
 //////////////////////////////////////////////////////////////////////////
 orxSTATUS orxFASTCALL ImGuiOrxTestApplication::StaticEventHandler(const orxEVENT *_pstEvent)
 	{
