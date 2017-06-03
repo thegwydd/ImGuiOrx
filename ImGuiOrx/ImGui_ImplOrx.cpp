@@ -18,89 +18,45 @@
 #include <gl/GL.h>
 
 #include <vector>
+#include <string>
 
 extern "C" {
 #include <orx.h>
     }
 
-
-static orxBITMAP * g_FontTexture = 0;
-
-//////////////////////////////////////////////////////////////////////////
-void ImGui_ImplOrx_Render_CmdList(orxVIEWPORT * pstViewport, const ImDrawList * cmd_list, int fb_width, int fb_height)
+//! Structs that contains the mapping between orx and ImGUI mouse buttons and the current state
+struct MouseButtonState
     {
-    const ImDrawVert * vtx_buffer = cmd_list->VtxBuffer.Data;
-    const ImDrawIdx * idx_buffer = cmd_list->IdxBuffer.Data;
+    //! Mouse button code in orx sytem
+    orxMOUSE_BUTTON		m_Button;
+    //! Mouse button code in GWEN system
+    unsigned char		m_ImGUIButton;
+    //! Last read pressure state
+    bool				m_Pressed;
+    };
 
-    int last_used_index = 0;
-    int num_vertices = cmd_list->IdxBuffer.size();
 
-    for (int cmd_i = 0; cmd_i < cmd_list->CmdBuffer.Size; cmd_i++)
-        {
-        const ImDrawCmd* pcmd = &cmd_list->CmdBuffer[cmd_i];
-        if (pcmd->UserCallback)
-            {
-            pcmd->UserCallback(cmd_list, pcmd);
-            }
-        else
-            {
-            int numVertexes = cmd_list->VtxBuffer.size();
+static orxBITMAP *                      g_FontTexture = 0;
+static void *                           g_ClipboardUserData = NULL;
+static std::string                      g_ClipboardText;
+static int                              g_ClipboardSize = 0;
 
-            orxDISPLAY_VERTEX * pVertexes = NULL;
-            std::vector<orxDISPLAY_VERTEX> vertexes;
-            if (sizeof(ImDrawVert) != sizeof(orxDISPLAY_VERTEX))
-                {
-                vertexes.resize(numVertexes);
-                // build the vertex list in Orx format
-                for (int vertex_index = 0; vertex_index < numVertexes; ++vertex_index)
-                    {
-                    ImDrawVert * cur_vtx_buffer = cmd_list->VtxBuffer.Data + vertex_index;
-                    orxDISPLAY_VERTEX * pstVertex = &vertexes[vertex_index];
+static double                           g_Time = 0.0f;
+static bool                             g_MousePressed[3] = { false, false, false };
+static float                            g_MouseWheel = 0.0f;
 
-                    pstVertex->stRGBA.u32RGBA = cur_vtx_buffer->col;
-                    pstVertex->fX = cur_vtx_buffer->pos.x;
-                    pstVertex->fY = cur_vtx_buffer->pos.y;
-                    pstVertex->fU = cur_vtx_buffer->uv.x;
-                    pstVertex->fV = cur_vtx_buffer->uv.y;
-                    }
+#define MAX_IMGUI_MOUSE_BUTTONS         5
+static MouseButtonState                 g_ButtonStates[MAX_IMGUI_MOUSE_BUTTONS];
 
-                pVertexes = &vertexes[0];
-                }
-             else
-                 pVertexes = (orxDISPLAY_VERTEX *)vtx_buffer;
-
-            orxU16 * pIndexes = NULL;
-            std::vector<orxU16> indexes;
-            if (sizeof(ImDrawIdx) != 2)
-                {
-                indexes.resize(cmd_list->IdxBuffer.size());
-
-                for (size_t a=0; a<indexes.size(); a++)
-                    indexes[a] = (orxU16)idx_buffer[a];
-
-                pIndexes = &indexes[0];
-                }
-            else
-                pIndexes = (orxU16 *)idx_buffer;
-
-            orxBITMAP * pstBitmap = (orxBITMAP *)pcmd->TextureId;
-            orxDisplay_SetBitmapClipping(pstBitmap, (int)pcmd->ClipRect.x, (int)(fb_height - pcmd->ClipRect.w), (int)(pcmd->ClipRect.z - pcmd->ClipRect.x), (int)(pcmd->ClipRect.w - pcmd->ClipRect.y));
-            orxDisplay_DrawCustomMesh(pstBitmap, orxDISPLAY_SMOOTHING_ON, orxDISPLAY_BLEND_MODE_ALPHA, orxDISPLAY_DRAW_MODE_TRIANGLES, numVertexes, pVertexes, pIndexes, pcmd->ElemCount);
-            }
-
-        idx_buffer += pcmd->ElemCount;
-        }
-    }
+//! Updates mouse state
+static void UpdateMouse(ImGuiIO & io);
+//! Updates keyboard state
+static void UpdateKeyboard(ImGuiIO & io);
 
 //////////////////////////////////////////////////////////////////////////
 void ImGui_ImplOrx_Render(void * pvViewport, ImDrawData* draw_data)
 {
     orxVIEWPORT * pstViewport = (orxVIEWPORT *)pvViewport;
-    // Gets screen bitmap
-    orxBITMAP * pstScreen = orxDisplay_GetScreenBitmap();
-
-    // Restores screen as destination bitmap
-    orxDisplay_SetDestinationBitmaps(&pstScreen, 1);
 
     // Avoid rendering when minimized, scale coordinates for retina displays (screen coordinates != framebuffer coordinates)
     ImGuiIO& io = ImGui::GetIO();
@@ -110,6 +66,10 @@ void ImGui_ImplOrx_Render(void * pvViewport, ImDrawData* draw_data)
         return;
     draw_data->ScaleClipRects(io.DisplayFramebufferScale);
 
+    // Gets screen bitmap
+    orxBITMAP * pstScreen = orxDisplay_GetScreenBitmap();
+    // Restores screen as destination bitmap
+    orxDisplay_SetDestinationBitmaps(&pstScreen, 1);
     // Restores screen bitmap clipping
     orxDisplay_SetBitmapClipping(orxDisplay_GetScreenBitmap(), 0, 0, orxF2U(fb_width), orxF2U(fb_height));
 
@@ -117,43 +77,8 @@ void ImGui_ImplOrx_Render(void * pvViewport, ImDrawData* draw_data)
     for (int n = 0; n < draw_data->CmdListsCount; n++)
         {
         const ImDrawList * cmd_list = draw_data->CmdLists[n];
-        ImGui_ImplOrx_Render_CmdList(pstViewport, cmd_list, fb_width, fb_height);
-        }
-}
-
-/*
-//////////////////////////////////////////////////////////////////////////
-void ImGui_ImplOrx_Render(void * pvViewport, ImDrawData* draw_data)
-    {
-    orxVIEWPORT * pstViewport = (orxVIEWPORT *)pvViewport;
-
-    // flush orx arrays
-    orxDisplay_SetVideoMode(NULL);
-
-    // Avoid rendering when minimized, scale coordinates for retina displays (screen coordinates != framebuffer coordinates)
-    ImGuiIO& io = ImGui::GetIO();
-    int fb_width = (int)(io.DisplaySize.x * io.DisplayFramebufferScale.x);
-    int fb_height = (int)(io.DisplaySize.y * io.DisplayFramebufferScale.y);
-    if (fb_width == 0 || fb_height == 0)
-        return;
-    draw_data->ScaleClipRects(io.DisplayFramebufferScale);
-
-    // We are using the OpenGL fixed pipeline to make the example code simpler to read!
-    // Setup render state: alpha-blending enabled, no face culling, no depth testing, scissor enabled, vertex/texcoord/color pointers.
-    GLint last_texture; glGetIntegerv(GL_TEXTURE_BINDING_2D, &last_texture);
-    GLint last_scissor_box[4]; glGetIntegerv(GL_SCISSOR_BOX, last_scissor_box);
-    
-    // Render command lists
-    #define OFFSETOF(TYPE, ELEMENT) ((size_t)&(((TYPE *)0)->ELEMENT))
-    for (int n = 0; n < draw_data->CmdListsCount; n++)
-        {
-        const ImDrawList * cmd_list = draw_data->CmdLists[n];
         const ImDrawVert * vtx_buffer = cmd_list->VtxBuffer.Data;
         const ImDrawIdx * idx_buffer = cmd_list->IdxBuffer.Data;
-
-        glVertexPointer(2, GL_FLOAT, sizeof(ImDrawVert), (const GLvoid*)((const char*)vtx_buffer + OFFSETOF(ImDrawVert, pos)));
-        glTexCoordPointer(2, GL_FLOAT, sizeof(ImDrawVert), (const GLvoid*)((const char*)vtx_buffer + OFFSETOF(ImDrawVert, uv)));
-        glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(ImDrawVert), (const GLvoid*)((const char*)vtx_buffer + OFFSETOF(ImDrawVert, col)));
 
         for (int cmd_i = 0; cmd_i < cmd_list->CmdBuffer.Size; cmd_i++)
             {
@@ -164,49 +89,40 @@ void ImGui_ImplOrx_Render(void * pvViewport, ImDrawData* draw_data)
                 }
             else
                 {
-                orxBITMAP * pstBitmap = (orxBITMAP *)pcmd->TextureId;
-                glBindTexture(GL_TEXTURE_2D, (GLuint) *(uint32_t *)pstBitmap);
-                glScissor((int)pcmd->ClipRect.x, (int)(fb_height - pcmd->ClipRect.w), (int)(pcmd->ClipRect.z - pcmd->ClipRect.x), (int)(pcmd->ClipRect.w - pcmd->ClipRect.y));
-                glDrawElements(GL_TRIANGLES, (GLsizei)pcmd->ElemCount, sizeof(ImDrawIdx) == 2 ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT, idx_buffer);
+                orxCUSTOM_MESH customMesh = { 0 };
+                customMesh.pstBitmap = (orxBITMAP *)pcmd->TextureId;
+                customMesh.u32BitmapClipTLX = (int)pcmd->ClipRect.x;
+                customMesh.u32BitmapClipTLY = (int)(fb_height - pcmd->ClipRect.w);
+                customMesh.u32BitmapClipBRX = (int)(pcmd->ClipRect.z - pcmd->ClipRect.x);
+                customMesh.u32BitmapClipBRY = (int)(pcmd->ClipRect.w - pcmd->ClipRect.y);
+                customMesh.eSmoothing = orxDISPLAY_SMOOTHING_ON;
+                customMesh.eBlendMode = orxDISPLAY_BLEND_MODE_ALPHA;
+                customMesh.eDrawMode = orxDISPLAY_DRAW_MODE_TRIANGLES;
+                customMesh.u32VertexNumber = cmd_list->VtxBuffer.size();
+                customMesh.astVertexList = (orxDISPLAY_VERTEX *)vtx_buffer;
+                customMesh.u32IndexesCount = cmd_list->IdxBuffer.size();
+                customMesh.au16IndexList = idx_buffer;
+                customMesh.u32ElementCount = pcmd->ElemCount;
+
+                orxDisplay_DrawCustomMesh(&customMesh);
                 }
 
             idx_buffer += pcmd->ElemCount;
             }
         }
-#undef OFFSETOF
-
-    // Restore modified state
-    glBindTexture(GL_TEXTURE_2D, (GLuint)last_texture);
-    glScissor(last_scissor_box[0], last_scissor_box[1], (GLsizei)last_scissor_box[2], (GLsizei)last_scissor_box[3]);
-    }
-*/
+}
 
 //////////////////////////////////////////////////////////////////////////
 static const char* ImGui_ImplOrx_GetClipboardText(void* user_data)
 {
-    return NULL;
+    return g_ClipboardText.data();
 }
 
 //////////////////////////////////////////////////////////////////////////
 static void ImGui_ImplOrx_SetClipboardText(void* user_data, const char* text)
 {
-}
-
-//////////////////////////////////////////////////////////////////////////
-void ImGui_ImplOrx_MouseButtonCallback(int button, int action, int /*mods*/)
-{
-/*
-    if (action == GLFW_PRESS && button >= 0 && button < 3)
-        g_MousePressed[button] = true;
-*/
-}
-
-//////////////////////////////////////////////////////////////////////////
-void ImGui_ImplOrx_ScrollCallback(double /*xoffset*/, double yoffset)
-{
-/*
-    g_MouseWheel += (float)yoffset; // Use fractional mouse wheel, 1.0 unit 5 lines.
-*/
+    g_ClipboardUserData = user_data;
+    g_ClipboardText = text;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -242,7 +158,6 @@ orxBITMAP * InitFontTexture(ImGuiIO & io)
     {
     orxTEXTURE *pstTexture;
     orxBITMAP  *pstBitmap;
-    orxU32      u32BitmapSize;
     
     unsigned char* pixels;
     int u32Width, u32Height;
@@ -252,14 +167,10 @@ orxBITMAP * InitFontTexture(ImGuiIO & io)
     io.Fonts->GetTexDataAsRGBA32(&pixels, &u32Width, &u32Height);
     
     // Creates background texture
-    pstBitmap = orxDisplay_CreateBitmap(u32Width, u32Height);
     pstTexture = orxTexture_Create();
+    pstBitmap = orxDisplay_CreateBitmap(u32Width, u32Height);
+    orxDisplay_SetBitmapData(pstBitmap, pixels, u32Width * u32Height * sizeof(orxRGBA));
     orxTexture_LinkBitmap(pstTexture, pstBitmap, "Texture", orxTRUE);
-
-    u32BitmapSize = u32Width * u32Height * sizeof(orxRGBA);
-
-    // Updates bitmap content
-    orxDisplay_SetBitmapData(pstBitmap, pixels, u32BitmapSize);
 
     return pstBitmap;
     }
@@ -317,6 +228,13 @@ bool ImGui_ImplOrx_Init()
     io.GetClipboardTextFn = ImGui_ImplOrx_GetClipboardText;
     io.ClipboardUserData = /*g_Window*/NULL;
 
+    g_ButtonStates[0] = { orxMOUSE_BUTTON_LEFT		, 0		, false };
+    g_ButtonStates[1] = { orxMOUSE_BUTTON_RIGHT		, 1		, false };
+    g_ButtonStates[2] = { orxMOUSE_BUTTON_MIDDLE	, 2		, false };
+    g_ButtonStates[3] = { orxMOUSE_BUTTON_EXTRA_1	, 3		, false };
+    g_ButtonStates[4] = { orxMOUSE_BUTTON_EXTRA_2	, 4		, false };
+
+
 #ifdef _WIN32
     io.ImeWindowHandle = /*glfwGetWin32Window(g_Window)*/NULL;
 #endif
@@ -348,6 +266,63 @@ void ImGui_ImplOrx_NewFrame()
     io.DisplaySize = ImVec2(display_w, display_h);
     io.DisplayFramebufferScale = ImVec2(1, 1);
 
+    // Setup time step
+    double current_time = orxSystem_GetSystemTime();
+    io.DeltaTime = g_Time > 0.0 ? (float)(current_time - g_Time) : (float)(1.0f / 60.0f);
+    g_Time = current_time;
+
+    UpdateMouse(io);
+    UpdateKeyboard(io);
+
     // Start the frame
     ImGui::NewFrame();
 }
+
+//////////////////////////////////////////////////////////////////////////
+void UpdateMouse(ImGuiIO & io)
+    {
+    // Get current mouse position
+    orxVECTOR pos;
+    orxMouse_GetPosition(&pos);
+    io.MousePos = ImVec2(pos.fX, pos.fY);
+
+    // get delta from last orxMouse_GetPosition call
+    orxVECTOR delta;
+    orxMouse_GetMoveDelta(&delta);
+
+    // test the wheel
+//    if ((state.m_Button == orxMOUSE_BUTTON_WHEEL_UP) || (state.m_Button == orxMOUSE_BUTTON_WHEEL_DOWN))
+        io.MouseWheel = orxMouse_GetWheelDelta();
+
+    // poll for special keys
+    for (int a=0; a<MAX_IMGUI_MOUSE_BUTTONS; a++)
+        {
+        MouseButtonState & state = g_ButtonStates[a];
+        // check if it's presses
+        bool pressed = orxMouse_IsButtonPressed(state.m_Button) == orxTRUE;
+        // check if the state changed from last time
+        if (pressed != state.m_Pressed)
+            {
+            // yes, then update new state...
+            state.m_Pressed = pressed;
+            // ...and tell it to the canvas!
+            io.MouseDown[state.m_ImGUIButton] = state.m_Pressed;
+            }
+        }
+    }
+
+//////////////////////////////////////////////////////////////////////////
+void UpdateKeyboard(ImGuiIO & io)
+    {
+    for (int key = orxKEYBOARD_KEY_A; key < orxKEYBOARD_KEY_NUMBER; key++)
+        {
+        bool pressed = orxKeyboard_IsKeyPressed((orxKEYBOARD_KEY)key) == orxTRUE;
+        io.KeysDown[key] = pressed;
+        }
+
+    io.KeyCtrl = io.KeysDown[orxKEYBOARD_KEY_LCTRL] || io.KeysDown[orxKEYBOARD_KEY_RCTRL];
+    io.KeyShift = io.KeysDown[orxKEYBOARD_KEY_LSHIFT] || io.KeysDown[orxKEYBOARD_KEY_RSHIFT];
+    io.KeyAlt = io.KeysDown[orxKEYBOARD_KEY_LALT] || io.KeysDown[orxKEYBOARD_KEY_RALT];
+    io.KeySuper = io.KeysDown[orxKEYBOARD_KEY_LSYSTEM] || io.KeysDown[orxKEYBOARD_KEY_RSYSTEM];
+    }
+

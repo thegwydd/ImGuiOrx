@@ -105,18 +105,19 @@ orxSTATUS ImGuiOrxTestApplication::HandleOrxEvent(const orxEVENT *_pstEvent)
 	if ((_pstEvent->eType == orxEVENT_TYPE_RENDER) && (_pstEvent->eID == orxRENDER_EVENT_STOP))
         ImGui_ImplOrx_Render(NULL, ImGui::GetDrawData());
 
-/*
 	if (_pstEvent->eType == orxEVENT_TYPE_DISPLAY)
-			UpdateCanvasSize();
-*/
+        ResizeViewport();
 
-/*
-	else
-		m_GwenInput.ProcessMessage(_pstEvent);
-*/
-	
 	return orxSTATUS_SUCCESS;
 	}
+
+//////////////////////////////////////////////////////////////////////////
+void ImGuiOrxTestApplication::ResizeViewport()
+    {
+    orxFLOAT scr_w, scr_h;
+    orxDisplay_GetScreenSize(&scr_w, &scr_h);
+    orxViewport_SetSize(GetMainViewport(), scr_w, scr_h);
+    }
 
 //////////////////////////////////////////////////////////////////////////
 void ImGuiOrxTestApplication::InitializeGuiSystem()

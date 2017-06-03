@@ -8,6 +8,7 @@ extern "C" {
 #define __NO_SCROLLED__
 #include "Scroll/Scroll.h"
 
+#include <vector>
 
 //! OrxScroll class
 class ImGuiOrxTestApplication : public Scroll<ImGuiOrxTestApplication>
@@ -33,6 +34,9 @@ class ImGuiOrxTestApplication : public Scroll<ImGuiOrxTestApplication>
         void				InitializeScene();
         //! Main event handler
         orxSTATUS			HandleOrxEvent(const orxEVENT *_pstEvent);
+        // Resizes the viewport
+        void                ResizeViewport();
+        
 
 	private: // Statics
 		static orxSTATUS orxFASTCALL StaticEventHandler(const orxEVENT *_pstEvent);
