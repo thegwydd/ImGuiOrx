@@ -1,51 +1,31 @@
 #pragma once
 //! Includes
 
-extern "C" {
-#include <orx.h>
-    }
+#include "OrxGuiApplication.h"
 
-#define __NO_SCROLLED__
-#include "Scroll/Scroll.h"
-
-#include <vector>
-
+//////////////////////////////////////////////////////////////////////////
 //! OrxScroll class
-class ImGuiOrxTestApplication : public Scroll<ImGuiOrxTestApplication>
+class ImGuiOrxTestApplication : public OrxGuiApplication<ImGuiOrxTestApplication>
 	{
 	public:
         ImGuiOrxTestApplication();
         ~ImGuiOrxTestApplication();
 
-	private: // Overrides
-		//! Initialize the program
-		virtual orxSTATUS	Init();
-		//! Callback called every frame
-		virtual orxSTATUS	Run();
-		//! Exit the program
-		virtual void		Exit();
+    protected: // Overrides
 		//! Binds objects
 		void				BindObjects();
-
-	private: // Overrides
-        //! Initializes Gui system
-        void				InitializeGuiSystem();
-        //! Initializes ORX events to pass to input system
-        void				InitializeEvents();
         //! Initializes the scene
         void				InitializeScene();
         //! Main event handler
-        orxSTATUS			HandleOrxEvent(const orxEVENT *_pstEvent);
+        orxSTATUS			OnOrxEvent(const orxEVENT *_pstEvent);
         //! Resizes the viewport
         void                ResizeViewport();
-        //! Prints all sections
-        void                PrintSections();
+        //! Renders gui stuff
+        void                RenderGui();
 
     private:
         ScrollObject *		m_CurrentScene;
         ScrollObject *		m_Soldier;
-
-	private: // Statics
-		static orxSTATUS orxFASTCALL StaticEventHandler(const orxEVENT *_pstEvent);
-
+        bool                m_Show_test_window;
+        bool                m_Show_another_window;
 	};

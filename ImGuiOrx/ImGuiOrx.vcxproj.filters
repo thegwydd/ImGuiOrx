@@ -66,6 +66,9 @@
     <ClInclude Include="ImGui_Orx.h">
       <Filter>ImGuiOrx</Filter>
     </ClInclude>
+    <ClInclude Include="OrxGuiApplication.h">
+      <Filter>Application</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ImGuiOrxTestApplication.cpp">

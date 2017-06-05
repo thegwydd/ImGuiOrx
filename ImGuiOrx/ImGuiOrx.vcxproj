@@ -188,6 +188,7 @@ xcopy /y /i $(ProjectDir)\data\*.* $(TargetDir)
     <ClInclude Include="ImGui\stb_textedit.h" />
     <ClInclude Include="ImGui\stb_truetype.h" />
     <ClInclude Include="ImGui_Orx.h" />
+    <ClInclude Include="OrxGuiApplication.h" />
     <ClInclude Include="Scroll\Scroll.h" />
     <ClInclude Include="Scroll\ScrollBase.h" />
     <ClInclude Include="Scroll\ScrollEd.h" />
