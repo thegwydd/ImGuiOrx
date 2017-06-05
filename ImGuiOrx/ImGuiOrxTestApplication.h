@@ -2,6 +2,9 @@
 //! Includes
 
 #include "OrxGuiApplication.h"
+#include "ObjectHierarchy.h"
+
+using namespace ImGui::Orx;
 
 //////////////////////////////////////////////////////////////////////////
 //! OrxScroll class
@@ -28,4 +31,7 @@ class ImGuiOrxTestApplication : public OrxGuiApplication<ImGuiOrxTestApplication
         ScrollObject *		m_Soldier;
         bool                m_Show_test_window;
         bool                m_Show_another_window;
+        ObjectHierarchy     m_ObjectHierarchy;
+
+
 	};

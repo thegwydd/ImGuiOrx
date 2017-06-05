@@ -83,7 +83,7 @@ void ImGuiOrxTestApplication::InitializeScene()
     orxConfig_Load("ImGuiOrx.ini");
     orxConfig_Load("Level1.ini");
 
-    m_CurrentScene = CreateObject("Walls");
+//     m_CurrentScene = CreateObject("Walls");
 
     // create objects from level1
     m_Soldier = CreateObject("Soldier");
@@ -117,9 +117,16 @@ void ImGuiOrxTestApplication::RenderGui()
 
     ImVec4 clear_color = ImColor(114, 144, 154);
 
+    orxFLOAT viewport_w, viewport_h;
+    orxViewport_GetSize(GetMainViewport(), &viewport_w, &viewport_h);
+
+    m_ObjectHierarchy.ShowObjectTree(ImVec2(0, 0), ImVec2(300, viewport_h), -1.0F, ImGuiWindowFlags_NoMove);
     // 1. Show a simple window
     // Tip: if we don't call ImGui::Begin()/ImGui::End() the widgets appears in a window automatically called "Debug"
+
+
     ImGui::Text("Hello, world!");
+    ImGui::SetNextWindowSize(ImVec2(200, 500), ImGuiSetCond_FirstUseEver);
     static float f = 0.0f;
     ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
     ImGui::ColorEdit3("clear color", (float*)&clear_color);
@@ -147,3 +154,5 @@ void ImGuiOrxTestApplication::RenderGui()
     // Rendering
     ImGui::Render();
     }
+
+

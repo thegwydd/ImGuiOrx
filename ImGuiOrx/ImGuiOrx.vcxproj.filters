@@ -16,6 +16,9 @@
     <Filter Include="ImGuiOrx">
       <UniqueIdentifier>{03ba6fe4-9a6e-45da-a6ac-442d4658f6a3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="GuiControls">
+      <UniqueIdentifier>{fb45aa78-4132-41f2-98b6-2f9e55ad9ea5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ImGuiOrxTestApplication.h">
@@ -68,6 +71,9 @@
     </ClInclude>
     <ClInclude Include="OrxGuiApplication.h">
       <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectHierarchy.h">
+      <Filter>GuiControls</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
