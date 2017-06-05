@@ -51,7 +51,7 @@ orxSTATUS ImGuiOrxTestApplication::OnOrxEvent(const orxEVENT *_pstEvent)
 	if (_pstEvent->eType == orxEVENT_TYPE_DISPLAY)
         ResizeViewport();
 
-	return orxSTATUS_SUCCESS;
+	return OrxGuiApplication::OnOrxEvent(_pstEvent);
 	}
 
 //////////////////////////////////////////////////////////////////////////
@@ -77,6 +77,8 @@ void ImGuiOrxTestApplication::ResizeViewport()
 //////////////////////////////////////////////////////////////////////////
 void ImGuiOrxTestApplication::InitializeScene()
 	{
+    OrxGuiApplication::InitializeScene();
+    
     // create the scene
     orxConfig_Load("ImGuiOrx.ini");
     orxConfig_Load("Level1.ini");
@@ -92,11 +94,14 @@ void ImGuiOrxTestApplication::InitializeScene()
         ScrollObject * pObj = CreateObject("O-EnemyBug");
         const orxCHAR * pszName = orxObject_GetName(pObj->GetOrxObject());
         }
+ 
     }
 
 //////////////////////////////////////////////////////////////////////////
 void ImGuiOrxTestApplication::BindObjects()
 	{
+    OrxGuiApplication::BindObjects();
+
     ScrollBindObject<EnemyBug>("O-EnemyBug");
     ScrollBindObject<Hero>("O-Hero");
     ScrollBindObject<Soldier>("Soldier");
@@ -106,6 +111,8 @@ void ImGuiOrxTestApplication::BindObjects()
 //////////////////////////////////////////////////////////////////////////
 void ImGuiOrxTestApplication::RenderGui()
     {
+    OrxGuiApplication::RenderGui();
+
     ImGui_Orx_NewFrame();
 
     ImVec4 clear_color = ImColor(114, 144, 154);
