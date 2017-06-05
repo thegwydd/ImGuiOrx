@@ -63,7 +63,7 @@
     <ClInclude Include="Walls.h">
       <Filter>GameObjects</Filter>
     </ClInclude>
-    <ClInclude Include="ImGui_ImplOrx.h">
+    <ClInclude Include="ImGui_Orx.h">
       <Filter>ImGuiOrx</Filter>
     </ClInclude>
   </ItemGroup>
@@ -92,7 +92,7 @@
     <ClCompile Include="Walls.cpp">
       <Filter>GameObjects</Filter>
     </ClCompile>
-    <ClCompile Include="ImGui_ImplOrx.cpp">
+    <ClCompile Include="ImGui_Orx.cpp">
       <Filter>ImGuiOrx</Filter>
     </ClCompile>
   </ItemGroup>

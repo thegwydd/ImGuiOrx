@@ -6,7 +6,7 @@
 #include "ImGuiOrxTestApplication.h"
 #undef __SCROLL_IMPL__
 
-#include "ImGui_ImplOrx.h"
+#include "ImGui_Orx.h"
 
 #include "EnemyBug.h"
 #include "Hero.h"
@@ -34,6 +34,18 @@ int main(int argc, char **argv)
 #endif // __orxMSVC__
 
 //////////////////////////////////////////////////////////////////////////
+ImGuiOrxTestApplication::ImGuiOrxTestApplication() :
+    m_CurrentScene(nullptr),
+    m_Soldier(nullptr)
+    {
+    }
+
+//////////////////////////////////////////////////////////////////////////
+ImGuiOrxTestApplication::~ImGuiOrxTestApplication()
+    {
+    }
+
+//////////////////////////////////////////////////////////////////////////
 orxSTATUS orxFASTCALL ImGuiOrxTestApplication::StaticEventHandler(const orxEVENT *_pstEvent)
 	{
 	return ImGuiOrxTestApplication::GetInstance().HandleOrxEvent(_pstEvent);
@@ -44,9 +56,6 @@ orxSTATUS ImGuiOrxTestApplication::Init ()
 	{
 	orxSTATUS result = orxSTATUS_SUCCESS;
  
-    m_CurrentScene = nullptr;
-    m_Soldier = nullptr;
-
     InitializeGuiSystem();
     InitializeEvents();
     BindObjects();
@@ -63,7 +72,7 @@ orxSTATUS ImGuiOrxTestApplication::Run ()
 	{
 	orxSTATUS result = orxSTATUS_SUCCESS;
 
-    ImGui_ImplOrx_NewFrame();
+    ImGui_Orx_NewFrame();
 
     ImVec4 clear_color = ImColor(114, 144, 154);
 
@@ -103,14 +112,14 @@ orxSTATUS ImGuiOrxTestApplication::Run ()
 //////////////////////////////////////////////////////////////////////////
 void ImGuiOrxTestApplication::Exit ()
 	{
-    ImGui_ImplOrx_Shutdown();
+    ImGui_Orx_Shutdown();
     }
 
 //////////////////////////////////////////////////////////////////////////
 orxSTATUS ImGuiOrxTestApplication::HandleOrxEvent(const orxEVENT *_pstEvent)
 	{
 	if ((_pstEvent->eType == orxEVENT_TYPE_RENDER) && (_pstEvent->eID == orxRENDER_EVENT_STOP))
-        ImGui_ImplOrx_Render(NULL, ImGui::GetDrawData());
+        ImGui_Orx_Render(NULL, ImGui::GetDrawData());
 
 	if (_pstEvent->eType == orxEVENT_TYPE_DISPLAY)
         ResizeViewport();
@@ -142,7 +151,7 @@ void ImGuiOrxTestApplication::ResizeViewport()
 void ImGuiOrxTestApplication::InitializeGuiSystem()
     {
     // Setup ImGui binding
-    ImGui_ImplOrx_Init();
+    ImGui_Orx_Init();
 
     // Load Fonts
     // (there is a default font, this is only if you want to change it. see extra_fonts/README.txt for more details)

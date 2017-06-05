@@ -14,6 +14,8 @@ extern "C" {
 class ImGuiOrxTestApplication : public Scroll<ImGuiOrxTestApplication>
 	{
 	public:
+        ImGuiOrxTestApplication();
+        ~ImGuiOrxTestApplication();
 
 	private: // Overrides
 		//! Initialize the program
