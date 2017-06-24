@@ -1,3 +1,6 @@
 [submodule "imgui"]
 	path = imgui
 	url = https://github.com/ocornut/imgui.git
+[submodule "test/scroll"]
+	path = test/scroll
+	url = https://github.com/orx/scroll.git
