@@ -1,7 +1,7 @@
 #pragma once
 
-#include <orx.h>
-#include "ImGui/imgui.h"
+#include "orx.h"
+#include "imgui.h"
 
 namespace ImGui::Orx {
 

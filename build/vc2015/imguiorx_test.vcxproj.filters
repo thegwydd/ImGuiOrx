@@ -3,7 +3,6 @@
   <ItemGroup>
     <ClCompile Include="..\..\test\EnemyBug.cpp" />
     <ClCompile Include="..\..\test\Hero.cpp" />
-    <ClCompile Include="..\..\test\imguiorx_test.cpp" />
     <ClCompile Include="..\..\test\ImGuiOrxTestApplication.cpp" />
     <ClCompile Include="..\..\test\Soldier.cpp" />
     <ClCompile Include="..\..\test\Walls.cpp" />
@@ -11,7 +10,6 @@
   <ItemGroup>
     <ClInclude Include="..\..\test\EnemyBug.h" />
     <ClInclude Include="..\..\test\Hero.h" />
-    <ClInclude Include="..\..\test\imguiorx_test.h" />
     <ClInclude Include="..\..\test\ImGuiOrxTestApplication.h" />
     <ClInclude Include="..\..\test\ObjectHierarchy.h" />
     <ClInclude Include="..\..\test\OrxGuiApplication.h" />
@@ -19,6 +17,6 @@
     <ClInclude Include="..\..\test\Walls.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\test\ImGuiOrx.ini" />
+    <None Include="..\..\test\ImGuiOrxTestApplication.ini" />
   </ItemGroup>
 </Project>

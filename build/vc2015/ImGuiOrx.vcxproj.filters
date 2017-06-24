@@ -1,29 +1,41 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Application">
-      <UniqueIdentifier>{c233ee63-2be6-4bde-a192-844f531b73cc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Scroll">
-      <UniqueIdentifier>{0536d7e5-dfa0-48fb-9fbc-86a2be4b1fee}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ImGui">
-      <UniqueIdentifier>{b04eaada-d881-46b8-9106-b6eaaad1237a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GameObjects">
-      <UniqueIdentifier>{47367abc-2e34-476b-a701-a726843399be}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ImGuiOrx">
-      <UniqueIdentifier>{03ba6fe4-9a6e-45da-a6ac-442d4658f6a3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GuiControls">
-      <UniqueIdentifier>{fb45aa78-4132-41f2-98b6-2f9e55ad9ea5}</UniqueIdentifier>
-    </Filter>
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="..\..\include\ImGui_Orx.h" />
+    <ClInclude Include="..\..\imgui\imconfig.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\imgui\imgui.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\imgui\imgui_internal.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\imgui\stb_rect_pack.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\imgui\stb_textedit.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\imgui\stb_truetype.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\ImGui_Orx.cpp" />
+    <ClCompile Include="..\..\imgui\imgui.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\imgui\imgui_demo.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\imgui\imgui_draw.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="imgui">
+      <UniqueIdentifier>{b9430b97-fbe6-4909-b63e-a4c5eeb26772}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>

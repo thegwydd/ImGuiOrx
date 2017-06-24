@@ -19,9 +19,18 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\imgui\imconfig.h" />
+    <ClInclude Include="..\..\imgui\imgui.h" />
+    <ClInclude Include="..\..\imgui\imgui_internal.h" />
+    <ClInclude Include="..\..\imgui\stb_rect_pack.h" />
+    <ClInclude Include="..\..\imgui\stb_textedit.h" />
+    <ClInclude Include="..\..\imgui\stb_truetype.h" />
     <ClInclude Include="..\..\include\ImGui_Orx.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\imgui\imgui.cpp" />
+    <ClCompile Include="..\..\imgui\imgui_demo.cpp" />
+    <ClCompile Include="..\..\imgui\imgui_draw.cpp" />
     <ClCompile Include="..\..\src\ImGui_Orx.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
