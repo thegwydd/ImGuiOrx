@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Application">
+      <UniqueIdentifier>{c233ee63-2be6-4bde-a192-844f531b73cc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scroll">
+      <UniqueIdentifier>{0536d7e5-dfa0-48fb-9fbc-86a2be4b1fee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ImGui">
+      <UniqueIdentifier>{b04eaada-d881-46b8-9106-b6eaaad1237a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObjects">
+      <UniqueIdentifier>{47367abc-2e34-476b-a701-a726843399be}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ImGuiOrx">
+      <UniqueIdentifier>{03ba6fe4-9a6e-45da-a6ac-442d4658f6a3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GuiControls">
+      <UniqueIdentifier>{fb45aa78-4132-41f2-98b6-2f9e55ad9ea5}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\include\ImGui_Orx.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\src\ImGui_Orx.cpp" />
+  </ItemGroup>
+</Project>

@@ -8,3 +8,6 @@ ImGuiOrx/x64/*
 *.VC.db
 .vs/ImGuiOrx/v14/*
 *.opendb
+build/vc2015/.vs/*
+build/vc2015/Debug/*
+build/vc2015/Release/*
