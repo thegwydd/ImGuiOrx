@@ -12,10 +12,6 @@ class ImGuiOrxTestApplication : public OrxGuiApplication<ImGuiOrxTestApplication
         ~ImGuiOrxTestApplication();
 
     protected: // Overrides
-		//! Binds objects
-		void				BindObjects();
-        //! Initializes the scene
-        void				InitializeScene();
         //! Main event handler
         orxSTATUS			OnOrxEvent(const orxEVENT *_pstEvent);
         //! Resizes the viewport
@@ -26,4 +22,5 @@ class ImGuiOrxTestApplication : public OrxGuiApplication<ImGuiOrxTestApplication
     private:
         bool                m_Show_test_window;
         bool                m_Show_another_window;
+
 	};

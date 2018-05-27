@@ -28,7 +28,14 @@ class OrxGuiApplication : public Scroll<T>
             }
 
     private:
-        orxSTATUS orxFASTCALL InternalEventHandlerBouncer(const orxEVENT *_pstEvent) { return this->OnOrxEvent(_pstEvent);}
+        //////////////////////////////////////////////////////////////////////////
+        orxSTATUS orxFASTCALL InternalEventHandlerBouncer(const orxEVENT *_pstEvent) {
+            // handle the event and then call the virtual handler
+            if ((_pstEvent->eType == orxEVENT_TYPE_RENDER) && (_pstEvent->eID == orxRENDER_EVENT_STOP))
+                ImGui_Orx_Render(NULL, ImGui::GetDrawData());
+
+            return this->OnOrxEvent(_pstEvent);
+            }
 
     protected: // Overrides
         //////////////////////////////////////////////////////////////////////////
@@ -81,9 +88,7 @@ class OrxGuiApplication : public Scroll<T>
 
         //////////////////////////////////////////////////////////////////////////
         //! Main event handler
-        virtual orxSTATUS OnOrxEvent(const orxEVENT *_pstEvent) {
-            if ((_pstEvent->eType == orxEVENT_TYPE_RENDER) && (_pstEvent->eID == orxRENDER_EVENT_STOP))
-                ImGui_Orx_Render(NULL, ImGui::GetDrawData());
+        virtual orxSTATUS OnOrxEvent(const orxEVENT *_pstEvent) { 
             return orxSTATUS_SUCCESS;
             }
 

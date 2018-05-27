@@ -43,8 +43,8 @@ orxSTATUS ImGuiOrxTestApplication::OnOrxEvent(const orxEVENT *_pstEvent)
 	if (_pstEvent->eType == orxEVENT_TYPE_DISPLAY)
         ResizeViewport();
 
-	return OrxGuiApplication::OnOrxEvent(_pstEvent);
-	}
+    return orxSTATUS_SUCCESS;
+    }
 
 //////////////////////////////////////////////////////////////////////////
 void ImGuiOrxTestApplication::ResizeViewport()
@@ -64,19 +64,6 @@ void ImGuiOrxTestApplication::ResizeViewport()
     orxCamera_SetPosition(GetMainCamera(), &cam_pos);
 
     orxDEBUG_PRINT(orxDEBUG_LEVEL_LOG, "Viewport Size : %f, %f", vwp_w, vwp_h);
-    }
-
-//////////////////////////////////////////////////////////////////////////
-void ImGuiOrxTestApplication::InitializeScene()
-	{
-    OrxGuiApplication::InitializeScene();
-    
-    // create the scene
-    }
-
-//////////////////////////////////////////////////////////////////////////
-void ImGuiOrxTestApplication::BindObjects()
-	{
     }
 
 //////////////////////////////////////////////////////////////////////////

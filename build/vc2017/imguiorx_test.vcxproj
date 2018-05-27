@@ -23,7 +23,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\test\ImGuiOrxTestApplication.h" />
-    <ClInclude Include="..\..\test\ObjectHierarchy.h" />
     <ClInclude Include="..\..\test\OrxGuiApplication.h" />
   </ItemGroup>
   <ItemGroup>
