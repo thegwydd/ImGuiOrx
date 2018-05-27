@@ -49,7 +49,9 @@ class OrxGuiApplication : public Scroll<T>
         //! Callback called every frame
         virtual orxSTATUS Run() {
             orxSTATUS result = orxSTATUS_SUCCESS;
+            ImGui_Orx_NewFrame();
             RenderGui();
+            ImGui::Render();
             return orxSTATUS_SUCCESS;
             }
 
@@ -63,6 +65,7 @@ class OrxGuiApplication : public Scroll<T>
         //! Initializes Gui system
         void InitializeGuiSystem() {
             // Setup ImGui binding
+            ImGui::CreateContext();
             ImGui_Orx_Init();
             }
 

@@ -6,12 +6,6 @@
 #include "ImGuiOrxTestApplication.h"
 #undef __SCROLL_IMPL__
 
-#include "EnemyBug.h"
-#include "Hero.h"
-#include "Soldier.h"
-#include "Walls.h"
-
-
 #ifndef __orxMSVC__
 //////////////////////////////////////////////////////////////////////////
 int main(int argc, char **argv)
@@ -33,8 +27,6 @@ int main(int argc, char **argv)
 
 //////////////////////////////////////////////////////////////////////////
 ImGuiOrxTestApplication::ImGuiOrxTestApplication() :
-    m_CurrentScene(nullptr),
-    m_Soldier(nullptr),
     m_Show_test_window(true),
     m_Show_another_window(false)
     {
@@ -80,32 +72,11 @@ void ImGuiOrxTestApplication::InitializeScene()
     OrxGuiApplication::InitializeScene();
     
     // create the scene
-    orxConfig_Load("ImGuiOrx.ini");
-    orxConfig_Load("Level1.ini");
-
-//     m_CurrentScene = CreateObject("Walls");
-
-    // create objects from level1
-    m_Soldier = CreateObject("Soldier");
-   
-    // an enemies of course...
-    for (orxU32 i = 0; i < 5; i++)
-        {
-        ScrollObject * pObj = CreateObject("O-EnemyBug");
-        const orxCHAR * pszName = orxObject_GetName(pObj->GetOrxObject());
-        }
- 
     }
 
 //////////////////////////////////////////////////////////////////////////
 void ImGuiOrxTestApplication::BindObjects()
 	{
-    OrxGuiApplication::BindObjects();
-
-    ScrollBindObject<EnemyBug>("O-EnemyBug");
-    ScrollBindObject<Hero>("O-Hero");
-    ScrollBindObject<Soldier>("Soldier");
-    ScrollBindObject<Walls>("Walls");
     }
 
 //////////////////////////////////////////////////////////////////////////
@@ -113,17 +84,13 @@ void ImGuiOrxTestApplication::RenderGui()
     {
     OrxGuiApplication::RenderGui();
 
-    ImGui_Orx_NewFrame();
-
     ImVec4 clear_color = ImColor(114, 144, 154);
 
     orxFLOAT viewport_w, viewport_h;
     orxViewport_GetSize(GetMainViewport(), &viewport_w, &viewport_h);
 
-    m_ObjectHierarchy.ShowObjectTree(ImVec2(0, 0), ImVec2(300, viewport_h), -1.0F, ImGuiWindowFlags_NoMove);
     // 1. Show a simple window
     // Tip: if we don't call ImGui::Begin()/ImGui::End() the widgets appears in a window automatically called "Debug"
-
 
     ImGui::Text("Hello, world!");
     ImGui::SetNextWindowSize(ImVec2(200, 500), ImGuiSetCond_FirstUseEver);
@@ -148,11 +115,8 @@ void ImGuiOrxTestApplication::RenderGui()
     if (m_Show_test_window)
         {
         ImGui::SetNextWindowPos(ImVec2(650, 20), ImGuiSetCond_FirstUseEver);
-        ImGui::ShowTestWindow(&m_Show_test_window);
+        ImGui::ShowTestWindow();
         }
-
-    // Rendering
-    ImGui::Render();
     }
 
 

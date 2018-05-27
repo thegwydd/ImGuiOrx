@@ -103,6 +103,8 @@ static void orxFASTCALL ImGui_Orx_MouseWheelUpdate(const orxCLOCK_INFO *_pstCloc
 static const char* ImGui_Orx_GetClipboardText(void* user_data);
 //! Called by ImGui to set clipboard text
 static void ImGui_Orx_SetClipboardText(void* user_data, const char* text);
+//! Creates objects (font texture)
+static void ImGui_Orx_CreateDeviceObjects();
 
 //////////////////////////////////////////////////////////////////////////
 //                              GLOBAL DATA
@@ -164,7 +166,7 @@ void ImGui_Orx_Shutdown()
         orxClock_Unregister(gModuleData.m_pstMainClock, ImGui_Orx_MouseWheelUpdate);
 
     ImGui_Orx_InvalidateDeviceObjects();
-    ImGui::Shutdown();
+//    ImGui::Shutdown();
     }
 
 //////////////////////////////////////////////////////////////////////////
@@ -197,7 +199,7 @@ void ImGui_Orx_NewFrame()
     }
 
 //////////////////////////////////////////////////////////////////////////
-bool ImGui_Orx_CreateDeviceObjects()
+void ImGui_Orx_CreateDeviceObjects()
     {
     // Build texture atlas
     ImGuiIO& io = ImGui::GetIO();
@@ -205,8 +207,6 @@ bool ImGui_Orx_CreateDeviceObjects()
     // Store our identifier
     gModuleData.m_FontTexture = ImGui_Orx_InitFontTexture(io);
     io.Fonts->TexID = (void *)gModuleData.m_FontTexture;
-
-    return true;
     }
 
 //////////////////////////////////////////////////////////////////////////

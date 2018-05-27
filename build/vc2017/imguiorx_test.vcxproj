@@ -19,20 +19,12 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\test\EnemyBug.cpp" />
-    <ClCompile Include="..\..\test\Hero.cpp" />
     <ClCompile Include="..\..\test\ImGuiOrxTestApplication.cpp" />
-    <ClCompile Include="..\..\test\Soldier.cpp" />
-    <ClCompile Include="..\..\test\Walls.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\test\EnemyBug.h" />
-    <ClInclude Include="..\..\test\Hero.h" />
     <ClInclude Include="..\..\test\ImGuiOrxTestApplication.h" />
     <ClInclude Include="..\..\test\ObjectHierarchy.h" />
     <ClInclude Include="..\..\test\OrxGuiApplication.h" />
-    <ClInclude Include="..\..\test\Soldier.h" />
-    <ClInclude Include="..\..\test\Walls.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\test\ImGuiOrxTestApplication.ini" />
@@ -91,29 +83,34 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <LibraryPath>$(OutDir);$(ORX_PATH)\code\lib\dynamic;$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(NETFXKitsDir)Lib\um\x86</LibraryPath>
+    <LibraryPath>$(OutDir);$(ORX_AINVAR)\lib\dynamic;$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(NETFXKitsDir)Lib\um\x86</LibraryPath>
+    <IncludePath>$(ORX_AINVAR)\include;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <LibraryPath>$(OutDir);$(ORX_PATH)\code\lib\dynamic;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64</LibraryPath>
+    <LibraryPath>$(OutDir);$(ORX_AINVAR)\lib\dynamic;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64</LibraryPath>
+    <IncludePath>$(ORX_AINVAR)\include;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <LibraryPath>$(OutDir);$(ORX_PATH)\code\lib\dynamic;$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(NETFXKitsDir)Lib\um\x86</LibraryPath>
+    <LibraryPath>$(OutDir);$(ORX_AINVAR)\lib\dynamic;$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(NETFXKitsDir)Lib\um\x86</LibraryPath>
+    <IncludePath>$(ORX_AINVAR)\include;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <LibraryPath>$(OutDir);$(ORX_PATH)\code\lib\dynamic;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64</LibraryPath>
+    <LibraryPath>$(OutDir);$(ORX_AINVAR)\lib\dynamic;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64</LibraryPath>
+    <IncludePath>$(ORX_AINVAR)\include;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>__orxDEBUG__;WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)..\..\test\scroll\include;$(ORX_PATH)\code\include;$(SolutionDir)..\..\include;$(SolutionDir)..\..\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/std:c++latest %(AdditionalOptions)</AdditionalOptions>
+      <DisableSpecificWarnings>5033</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -121,8 +118,7 @@
       <AdditionalDependencies>orxd.lib;ImGuiOrx.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>copy /Y "$(ORX_PATH)\code\lib\dynamic\*.dll" "$(TargetDir)"
-copy /Y "$(SolutionDir)..\..\test\data\*.*" "$(TargetDir)"
+      <Command>copy /Y "$(ORX_AINVAR)\lib\dynamic\*.dll" "$(TargetDir)"
 copy /Y "$(SolutionDir)..\..\test\*.ini" "$(TargetDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -135,6 +131,7 @@ copy /Y "$(SolutionDir)..\..\test\*.ini" "$(TargetDir)"</Command>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)..\..\test\scroll\include;$(ORX_PATH)\code\include;$(SolutionDir)..\..\include;$(SolutionDir)..\..\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/std:c++latest %(AdditionalOptions)</AdditionalOptions>
+      <DisableSpecificWarnings>5033</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -142,8 +139,7 @@ copy /Y "$(SolutionDir)..\..\test\*.ini" "$(TargetDir)"</Command>
       <AdditionalDependencies>orxd.lib;ImGuiOrx.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>copy /Y "$(ORX_PATH)\code\lib\dynamic\*.dll" "$(TargetDir)"
-copy /Y "$(SolutionDir)..\..\test\data\*.*" "$(TargetDir)"
+      <Command>copy /Y "$(ORX_AINVAR)\lib\dynamic\*.dll" "$(TargetDir)"
 copy /Y "$(SolutionDir)..\..\test\*.ini" "$(TargetDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -158,6 +154,7 @@ copy /Y "$(SolutionDir)..\..\test\*.ini" "$(TargetDir)"</Command>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)..\..\test\scroll\include;$(ORX_PATH)\code\include;$(SolutionDir)..\..\include;$(SolutionDir)..\..\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/std:c++latest %(AdditionalOptions)</AdditionalOptions>
+      <DisableSpecificWarnings>5033</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -167,8 +164,7 @@ copy /Y "$(SolutionDir)..\..\test\*.ini" "$(TargetDir)"</Command>
       <AdditionalDependencies>orx.lib;ImGuiOrx.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>copy /Y "$(ORX_PATH)\code\lib\dynamic\*.dll" "$(TargetDir)"
-copy /Y "$(SolutionDir)..\..\test\data\*.*" "$(TargetDir)"
+      <Command>copy /Y "$(ORX_AINVAR)\lib\dynamic\*.dll" "$(TargetDir)"
 copy /Y "$(SolutionDir)..\..\test\*.ini" "$(TargetDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -183,6 +179,7 @@ copy /Y "$(SolutionDir)..\..\test\*.ini" "$(TargetDir)"</Command>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)..\..\test\scroll\include;$(ORX_PATH)\code\include;$(SolutionDir)..\..\include;$(SolutionDir)..\..\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/std:c++latest %(AdditionalOptions)</AdditionalOptions>
+      <DisableSpecificWarnings>5033</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -192,8 +189,7 @@ copy /Y "$(SolutionDir)..\..\test\*.ini" "$(TargetDir)"</Command>
       <AdditionalDependencies>orx.lib;ImGuiOrx.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>copy /Y "$(ORX_PATH)\code\lib\dynamic\*.dll" "$(TargetDir)"
-copy /Y "$(SolutionDir)..\..\test\data\*.*" "$(TargetDir)"
+      <Command>copy /Y "$(ORX_AINVAR)\lib\dynamic\*.dll" "$(TargetDir)"
 copy /Y "$(SolutionDir)..\..\test\*.ini" "$(TargetDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
