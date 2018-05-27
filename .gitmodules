@@ -1,3 +1,6 @@
 [submodule "test/scroll"]
 	path = test/scroll
 	url = https://github.com/orx/scroll.git
+[submodule "imgui"]
+	path = imgui
+	url = https://github.com/thegwydd/imgui.git
