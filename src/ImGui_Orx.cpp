@@ -256,22 +256,14 @@ void ImGui_Orx_Render(void * pvViewport, ImDrawData* draw_data)
                 }
             else
                 {
-                orxCUSTOM_MESH customMesh = { 0 };
-                customMesh.pstBitmap = (orxBITMAP *)pcmd->TextureId;
-                customMesh.u32BitmapClipTLX = (int)pcmd->ClipRect.x;
-                customMesh.u32BitmapClipTLY = (int)(fb_height - pcmd->ClipRect.w);
-                customMesh.u32BitmapClipBRX = (int)(pcmd->ClipRect.z - pcmd->ClipRect.x);
-                customMesh.u32BitmapClipBRY = (int)(pcmd->ClipRect.w - pcmd->ClipRect.y);
-                customMesh.eSmoothing = orxDISPLAY_SMOOTHING_ON;
-                customMesh.eBlendMode = orxDISPLAY_BLEND_MODE_ALPHA;
-                customMesh.eDrawMode = orxDISPLAY_DRAW_MODE_TRIANGLES;
-                customMesh.u32VertexNumber = cmd_list->VtxBuffer.size();
-                customMesh.astVertexList = (orxDISPLAY_VERTEX *)vtx_buffer;
-                customMesh.u32IndexesCount = cmd_list->IdxBuffer.size();
-                customMesh.au16IndexList = idx_buffer;
-                customMesh.u32ElementCount = pcmd->ElemCount;
-
-                orxDisplay_DrawCustomMesh(&customMesh);
+                orxDISPLAY_MESH stMesh = {};
+                stMesh.ePrimitive = orxDISPLAY_PRIMITIVE_TRIANGLES;
+                stMesh.astVertexList = (orxDISPLAY_VERTEX *)vtx_buffer;
+                stMesh.u32VertexNumber = cmd_list->VtxBuffer.size();
+                stMesh.au16IndexList = idx_buffer;
+                stMesh.u32IndexNumber = pcmd->ElemCount;
+                orxDisplay_SetBitmapClipping(orxNULL, (orxU32)pcmd->ClipRect.x, (orxU32)pcmd->ClipRect.y, (orxU32)pcmd->ClipRect.z, (orxU32)pcmd->ClipRect.w);
+                orxDisplay_DrawMesh(&stMesh, (orxBITMAP *)pcmd->TextureId, orxDISPLAY_SMOOTHING_ON, orxDISPLAY_BLEND_MODE_ALPHA);
                 }
 
             idx_buffer += pcmd->ElemCount;
