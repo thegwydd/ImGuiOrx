@@ -14,3 +14,6 @@ build/vc2015/Release/*
 /build/vc2017/.vs/*
 /build/vc2017/Debug/*
 /build/vc2017/Release/*
+/build/linux/
+/build/windows/
+/lib/
