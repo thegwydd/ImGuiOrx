@@ -1,4 +1,4 @@
-# ImGui for Orx Engine
+# ImGuiOrx v0.1.0 -  ImGui for Orx Engine
 
 ImGuiOrx is an integration of ImGui for the Orx Game Engine.
 
@@ -57,4 +57,4 @@ This issue will be solved on next release
 ## License
 
 This code is distributed under WTFPL License (http://www.wtfpl.net/)
-Enjoy.
+Enjoy and don't fuck about Whitesmiths coding style!
