@@ -9,6 +9,13 @@
 #ifndef __IMGUI_ORX_HEADER__
 #define __IMGUI_ORX_HEADER__
 
+
+#define IMGUI_ORX_VERSION_MAJOR		0
+#define IMGUI_ORX_VERSION_MINOR		1
+#define IMGUI_ORX_VERSION_PATCH		0
+
+
+
 #include "../imgui/imgui.h"
 
 // Initializes ImGui Orx system
@@ -25,5 +32,6 @@ IMGUI_API void        ImGui_Orx_Render(void * pvViewport, ImDrawData* draw_data)
 
 // Use if you want to reset your rendering device without losing ImGui state.
 IMGUI_API void        ImGui_Orx_InvalidateDeviceObjects();
+
 
 #endif //__IMGUI_ORX_HEADER__
