@@ -87,7 +87,7 @@ copybase = path.rebase ("..", os.getcwd (), os.getcwd () .. "/" .. destination)
 
 
 --
--- Solution: orx
+-- Solution: imgui_orx
 --
 
 solution "imgui_orx"
@@ -174,7 +174,7 @@ solution "imgui_orx"
         buildoptions { "/MP" }
 
 --
--- Project: orxLIB
+-- Project: imgui_orx_test
 --
 
 project "imgui_orx_lib"
@@ -183,7 +183,9 @@ project "imgui_orx_lib"
     {
         "../src/**.cpp",
         "../src/**.c",
-        "../include/**.h"
+        "../include/**.h",
+        "../imgui/*.cpp",
+        "../imgui/*.h"
     }
 
     targetname ("imgui_orx")
@@ -245,3 +247,80 @@ project "imgui_orx_lib"
         links {}
 
 
+		
+		
+		
+		
+		
+		
+		
+project "imgui_orx_test"
+    files {"../test/main.cpp"}
+
+    targetdir ("../bin")
+
+    kind ("ConsoleApp")
+
+    configuration {"not xcode*", "*Core*"}
+        defines {"__orxSTATIC__"}
+
+
+-- Linux
+
+    configuration {"linux"}
+		links { "../lib/static/imgui_orxd", os.getenv('ORX').."/lib/dynamic/orxd", }
+        linkoptions {"-Wl,-rpath ./", "-Wl,--export-dynamic"}
+
+    -- This prevents an optimization bug from happening with some versions of gcc on linux
+    configuration {"linux", "not *Debug*"}
+		links { "../lib/static/imgui_orx", os.getenv('ORX').."/lib/dynamic/orx" }
+        buildoptions {"-fschedule-insns"}
+
+
+-- Mac OS X
+
+    configuration {"macosx", "gmake", "*Core*"}
+        links
+        {
+            "Foundation.framework",
+            "IOKit.framework",
+            "AppKit.framework",
+            "pthread"
+        }
+
+    configuration {"macosx", "codelite or codeblocks", "*Core*"}
+        linkoptions
+        {
+            "-framework Foundation",
+            "-framework IOKit",
+            "-framework AppKit"
+        }
+        links
+        {
+            "pthread"
+        }
+
+
+-- Windows
+
+    configuration {"windows", "Debug"}
+        implibdir ("../lib/static")
+        implibname ("imporx")
+        implibextension (".lib")
+        links
+        {
+			"../lib/static/imgui_orxd",
+			os.getenv('ORX').."/lib/dynamic/orxd",
+            "winmm"
+        }
+
+	configuration {"windows", "Release"}
+        implibdir ("../lib/static")
+        implibname ("imporx")
+        implibextension (".lib")
+        links
+        {
+			"../lib/static/imgui_orx",
+			os.getenv('ORX').."/lib/dynamic/orx",
+            "winmm"
+        }
