@@ -36,6 +36,9 @@ Ensure the submodules required by this repo are updated before building. To do s
 Now you can move to **(ImGuiOrx folder)/build/(platform)** and select your favourite IDE folder and use project files to build ImGuiOrx.  
 In the output folder, **(ImGuiOrx folder)/lib/static**, you can find produced static library.
 
+### IMPORTANT for Visual Studio users: 
+When you load the solution you need to right-click on the solution and then "Retarget Solution".
+
 ***
 
 ## Test application
@@ -43,14 +46,6 @@ In the output folder, **(ImGuiOrx folder)/lib/static**, you can find produced st
 Under **(ImGuiOrx folder)/test** folder you can find a test application you can use to play with this integration.  
 It will be built in the same time of ImGuiOrx Library.  
 You can find produced executable file in **(ImGuiOrx folder)/bin/** folder.
-
-
-#### Attention:  To run the test application you need to manually copy two files in the "*bin*" folder :   
-- the proper orx dynamic library (.dll/.so)  
-- **ImGuiOrxTestApplication.ini** that can be found in **(ImGuiOrx folder)/test**  
-
-This issue will be solved on next release
-
 
 ***
 
