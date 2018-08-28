@@ -56,5 +56,5 @@ This issue will be solved on next release
 
 ## License
 
-This code is distributed under WTFPL License (http://www.wtfpl.net/)
-Enjoy and don't fuck about Whitesmiths coding style!
+This code is distributed under WTFPL License (http://www.wtfpl.net/)  
+Enjoy and don't fuck about my Whitesmiths coding style!
