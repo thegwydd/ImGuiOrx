@@ -109,7 +109,7 @@ solution "imgui_orx"
     includedirs
     {
         "../include",
-		"../imgui",
+        "../imgui",
         os.getenv('ORX').."/include",
     }
 
@@ -148,19 +148,13 @@ solution "imgui_orx"
 
 -- Linux
 
-    configuration {"linux", "x32"}
-        libdirs {}
-        buildoptions { "-Wno-unused-function", "-Wno-unused-but-set-variable" }
-
-    configuration {"linux", "x64"}
-        libdirs {}
+    configuration {"linux"}
         buildoptions { "-Wno-unused-function", "-Wno-unused-but-set-variable" }
 
 
 -- Mac OS X
 
     configuration {"macosx"}
-        libdirs { }
         buildoptions { "-x c++", "-gdwarf-2", "-Wno-write-strings", "-fvisibility-inlines-hidden" }
         linkoptions { "-dead_strip" }
 
@@ -174,10 +168,10 @@ solution "imgui_orx"
         buildoptions { "/MP" }
 
 --
--- Project: imgui_orx_test
+-- Project: imgui_orx
 --
 
-project "imgui_orx_lib"
+project "imgui_orx"
 
     files
     {
@@ -188,19 +182,9 @@ project "imgui_orx_lib"
         "../imgui/*.h"
     }
 
+    kind ("StaticLib")
     targetname ("imgui_orx")
-
-    -- Work around for codelite "default" configuration
-    configuration {"codelite"}
-        kind ("StaticLib")
-
-    configuration {}
-        targetdir ("../lib/static")
-        kind ("StaticLib")
-
-    configuration {"not xcode*", "*Core*"}
-        targetdir ("../lib/static")
-        kind ("StaticLib")
+    targetdir ("../lib/static")
 
 
 -- Linux
@@ -208,7 +192,58 @@ project "imgui_orx_lib"
     configuration {"linux"}
         buildoptions {"-fPIC", "-std=c++11"}
         defines {"_GNU_SOURCE"}
-		
+        
+
+-- Mac OS X
+
+    configuration{"macosx"}
+        buildoptions { "-Wno-deprecated-declarations", "-Wno-empty-body", "-std=c++11" }
+
+
+-- Windows
+
+    configuration {"windows"}
+        
+
+--
+-- Project: imgui_orx_test
+--
+
+project "imgui_orx_test"
+    files {"../test/main.cpp"}
+
+    targetdir ("../bin")
+    kind ("ConsoleApp")
+    libdirs {"../lib/static"}
+    links
+    {
+        "imgui_orx"
+    }
+    configuration {"Debug"}
+        links { os.getenv('ORX').."/lib/dynamic/orxd", }
+    configuration {"not *Debug*"}
+        links { os.getenv('ORX').."/lib/dynamic/orx" }
+
+
+-- Linux
+
+    configuration {"linux"}
+        linkoptions {"-Wl,-rpath ./", "-Wl,--export-dynamic"}
+        postbuildcommands 
+        {
+            "cp -f " .. copybase .. "/test/*.ini " .. copybase .. "/bin",
+            "cp -f " .. os.getenv('ORX').."/lib/dynamic/*.so " .. copybase .. "/bin"
+        }
+
+    -- This prevents an optimization bug from happening with some versions of gcc on linux
+    configuration {"linux", "not *Debug*"}
+        buildoptions {"-fschedule-insns"}
+        postbuildcommands 
+        {
+            "cp -f " .. copybase .. "/test/*.ini " .. copybase .. "/bin",
+            "cp -f " .. os.getenv('ORX').."/lib/dynamic/*.so " .. copybase .. "/bin"
+        }
+
 
 -- Mac OS X
 
@@ -217,7 +252,12 @@ project "imgui_orx_lib"
         {
             "Foundation.framework",
             "IOKit.framework",
-            "AppKit.framework",
+            "AppKit.framework"
+        }
+        postbuildcommands 
+        {
+            "cp -f " .. copybase .. "/test/*.ini " .. copybase .. "/bin",
+            "cp -f " .. os.getenv('ORX').."/lib/dynamic/*.so " .. copybase .. "/bin"
         }
 
     configuration {"macosx", "codelite or codeblocks"}
@@ -225,132 +265,34 @@ project "imgui_orx_lib"
         {
             "-framework Foundation",
             "-framework IOKit",
-            "-framework AppKit",
+            "-framework AppKit"
         }
-
-    configuration { "macosx" }
-        links { }
-
-    configuration{"macosx"}
-        buildoptions { "-Wno-deprecated-declarations", "-Wno-empty-body", "-std=c++11" }
-
-    configuration {"macosx", "*Debug*"}
-        linkoptions {"-install_name @executable_path/libimguiorxd.dylib"}
-
-    configuration {"macosx", "*Release*"}
-        linkoptions {"-install_name @executable_path/libimguiorx.dylib"}
+    configuration {"macosx"}
+        links
+        {
+            "pthread"
+        }
+        postbuildcommands 
+        {
+            "cp -f " .. copybase .. "/test/*.ini " .. copybase .. "/bin",
+            "cp -f " .. os.getenv('ORX').."/lib/dynamic/*.so " .. copybase .. "/bin"
+        }
 
 
 -- Windows
 
     configuration {"windows"}
-        links {}
-
-
-		
-		
-		
-		
-		
-		
-		
-project "imgui_orx_test"
-    files {"../test/main.cpp"}
-
-    targetdir ("../bin")
-
-    kind ("ConsoleApp")
-
-    configuration {"not xcode*", "*Core*"}
-        defines {"__orxSTATIC__"}
-
-
--- Linux
-
-    configuration {"linux"}
-		links { "../lib/static/imgui_orxd", os.getenv('ORX').."/lib/dynamic/orxd", }
-        linkoptions {"-Wl,-rpath ./", "-Wl,--export-dynamic"}
         postbuildcommands 
-		{
-			"cp -f " .. copybase .. "/test/*.ini " .. copybase .. "/bin",
-			"cp -f " .. os.getenv('ORX').."/lib/dynamic/*.so " .. copybase .. "/bin"
-		}
-
-    -- This prevents an optimization bug from happening with some versions of gcc on linux
-    configuration {"linux", "not *Debug*"}
-		links { "../lib/static/imgui_orx", os.getenv('ORX').."/lib/dynamic/orx" }
-        buildoptions {"-fschedule-insns"}
-        postbuildcommands 
-		{
-			"cp -f " .. copybase .. "/test/*.ini " .. copybase .. "/bin",
-			"cp -f " .. os.getenv('ORX').."/lib/dynamic/*.so " .. copybase .. "/bin"
-		}
-
-
--- Mac OS X
-
-    configuration {"macosx", "gmake", "*Core*"}
-        links
         {
-            "Foundation.framework",
-            "IOKit.framework",
-            "AppKit.framework",
-            "pthread"
-        }
-        postbuildcommands 
-		{
-			"cp -f " .. copybase .. "/test/*.ini " .. copybase .. "/bin",
-			"cp -f " .. os.getenv('ORX').."/lib/dynamic/*.so " .. copybase .. "/bin"
-		}
-
-    configuration {"macosx", "codelite or codeblocks", "*Core*"}
-        linkoptions
-        {
-            "-framework Foundation",
-            "-framework IOKit",
-            "-framework AppKit"
+            "cmd /c copy /Y " .. path.translate(copybase, "\\") .. "\\test\\*.ini " .. path.translate(copybase, "\\") .. "\\bin",
+            "cmd /c copy /Y " .. os.getenv('ORX').."\\lib\\dynamic\\orx*.dll " .. path.translate(copybase, "\\") .. "\\bin"
         }
         links
         {
-            "pthread"
-        }
-        postbuildcommands 
-		{
-			"cp -f " .. copybase .. "/test/*.ini " .. copybase .. "/bin",
-			"cp -f " .. os.getenv('ORX').."/lib/dynamic/*.so " .. copybase .. "/bin"
-		}
-
-
--- Windows
-
-    configuration {"windows", "Debug"}
-        implibdir ("../lib/static")
-        implibname ("imporx")
-        implibextension (".lib")
-        links
-        {
-			"../lib/static/imgui_orxd",
-			os.getenv('ORX').."/lib/dynamic/orxd",
             "winmm"
         }
         postbuildcommands 
-		{
-			"cmd /c copy /Y " .. path.translate(copybase, "\\") .. "\\test\\*.ini " .. path.translate(copybase, "\\") .. "\\bin",
-			"cmd /c copy /Y " .. os.getenv('ORX').."\\lib\\dynamic\\orx*.dll " .. path.translate(copybase, "\\") .. "\\bin"
-		}
-
-	configuration {"windows", "Release"}
-        implibdir ("../lib/static")
-        implibname ("imporx")
-        implibextension (".lib")
-        links
         {
-			"../lib/static/imgui_orx",
-			os.getenv('ORX').."/lib/dynamic/orx",
-            "winmm"
+            "cmd /c copy /Y " .. path.translate(copybase, "\\") .. "\\test\\*.ini " .. path.translate(copybase, "\\") .. "\\bin",
+            "cmd /c copy /Y " .. os.getenv('ORX').."\\lib\\dynamic\\orx*.dll " .. path.translate(copybase, "\\") .. "\\bin"
         }
-        postbuildcommands 
-		{
-			"cmd /c copy /Y " .. path.translate(copybase, "\\") .. "\\test\\*.ini " .. path.translate(copybase, "\\") .. "\\bin",
-			"cmd /c copy /Y " .. os.getenv('ORX').."\\lib\\dynamic\\orx*.dll " .. path.translate(copybase, "\\") .. "\\bin"
-		}
