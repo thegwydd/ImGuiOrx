@@ -72,6 +72,7 @@ To allow your linker to link the proper library you need to specify static libra
  -**(ImGuiOrx folder)/lib/static**
 
 As you can see in **(ImGuiOrx folder)/test/main.cpp**, you need to include:
+
 - ImGui_Orx.h
 - imgui.h
 - orx.h
