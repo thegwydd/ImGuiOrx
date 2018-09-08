@@ -26,6 +26,7 @@ After cloning ImGuiOrx repository you need to run **./setup(.bat/.sh)** and let 
 ImGuiOrx library depends on ImGui (https://github.com/ocornut/imgui.git) hence a submodule has been used.
 
 Ensure the submodules required by this repo are updated before building. To do so:
+
 * cd into the imguiorx repo folder
 * git submodule init
 * git submodule update
@@ -35,6 +36,16 @@ Ensure the submodules required by this repo are updated before building. To do s
 
 Now you can move to **(ImGuiOrx folder)/build/(platform)** and select your favourite IDE folder and use project files to build ImGuiOrx.  
 In the output folder, **(ImGuiOrx folder)/lib/static**, you can find produced static library.
+
+For example, with gmake (mingw32):
+
+```
+mingw32-make imgui_orx config=debug
+mingw32-make imgui_orx config=release
+```
+
+
+Produces lib/static/libimgui_orx.a and lib/static/libimgui_orxd.a
 
 ### IMPORTANT for Visual Studio users: 
 When you load the solution you need to right-click on the solution and then "Retarget Solution".
@@ -53,6 +64,7 @@ You can find produced executable file in **(ImGuiOrx folder)/bin/** folder.
 
 Depending to the IDE you're using, you need to specify, in your project, where the compiler will find needed header files.
 In addition to Orx Game Engine header folder, you need to specify two more folders:
+
 - **(ImGuiOrx folder)/include**
 - **(ImGuiOrx folder)/imgui**
 
@@ -60,6 +72,7 @@ To allow your linker to link the proper library you need to specify static libra
  -**(ImGuiOrx folder)/lib/static**
 
 As you can see in **(ImGuiOrx folder)/test/main.cpp**, you need to include:
+
 - ImGui_Orx.h
 - imgui.h
 - orx.h

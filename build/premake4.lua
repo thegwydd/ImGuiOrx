@@ -220,9 +220,9 @@ project "imgui_orx_test"
         "imgui_orx"
     }
     configuration {"Debug"}
-        links { os.getenv('ORX').."/lib/dynamic/orxd", }
+        links { "$(ORX)/lib/dynamic/orxd", }
     configuration {"not *Debug*"}
-        links { os.getenv('ORX').."/lib/dynamic/orx" }
+        links { "$(ORX)/lib/dynamic/orx" }
 
 
 -- Linux
@@ -232,7 +232,7 @@ project "imgui_orx_test"
         postbuildcommands 
         {
             "cp -f " .. copybase .. "/test/*.ini " .. copybase .. "/bin",
-            "cp -f " .. os.getenv('ORX').."/lib/dynamic/*.so " .. copybase .. "/bin"
+            "cp -f $(ORX)/lib/dynamic/*.so " .. copybase .. "/bin"
         }
 
     -- This prevents an optimization bug from happening with some versions of gcc on linux
@@ -241,7 +241,7 @@ project "imgui_orx_test"
         postbuildcommands 
         {
             "cp -f " .. copybase .. "/test/*.ini " .. copybase .. "/bin",
-            "cp -f " .. os.getenv('ORX').."/lib/dynamic/*.so " .. copybase .. "/bin"
+            "cp -f $(ORX)/lib/dynamic/*.so " .. copybase .. "/bin"
         }
 
 
@@ -257,7 +257,7 @@ project "imgui_orx_test"
         postbuildcommands 
         {
             "cp -f " .. copybase .. "/test/*.ini " .. copybase .. "/bin",
-            "cp -f " .. os.getenv('ORX').."/lib/dynamic/*.so " .. copybase .. "/bin"
+            "cp -f ../lib/dynamic/*.so " .. copybase .. "/bin"
         }
 
     configuration {"macosx", "codelite or codeblocks"}
@@ -275,7 +275,7 @@ project "imgui_orx_test"
         postbuildcommands 
         {
             "cp -f " .. copybase .. "/test/*.ini " .. copybase .. "/bin",
-            "cp -f " .. os.getenv('ORX').."/lib/dynamic/*.so " .. copybase .. "/bin"
+            "cp -f ../lib/dynamic/*.so " .. copybase .. "/bin"
         }
 
 
@@ -284,15 +284,10 @@ project "imgui_orx_test"
     configuration {"windows"}
         postbuildcommands 
         {
-            "cmd /c copy /Y " .. path.translate(copybase, "\\") .. "\\test\\*.ini " .. path.translate(copybase, "\\") .. "\\bin",
-            "cmd /c copy /Y " .. os.getenv('ORX').."\\lib\\dynamic\\orx*.dll " .. path.translate(copybase, "\\") .. "\\bin"
+            "cmd /c copy /Y " .. path.translate(copybase, "\\") .. "\\test\\\\*.ini " .. path.translate(copybase, "\\") .. "\\bin",
+            "cmd /c copy /Y $(ORX)\\lib\\dynamic\\orx*.dll " .. path.translate(copybase, "\\") .. "\\bin"
         }
         links
         {
             "winmm"
-        }
-        postbuildcommands 
-        {
-            "cmd /c copy /Y " .. path.translate(copybase, "\\") .. "\\test\\*.ini " .. path.translate(copybase, "\\") .. "\\bin",
-            "cmd /c copy /Y " .. os.getenv('ORX').."\\lib\\dynamic\\orx*.dll " .. path.translate(copybase, "\\") .. "\\bin"
         }
