@@ -257,7 +257,7 @@ project "imgui_orx_test"
         postbuildcommands 
         {
             "cp -f " .. copybase .. "/test/*.ini " .. copybase .. "/bin",
-            "cp -f ../lib/dynamic/*.so " .. copybase .. "/bin"
+            "cp -f ../../../../orx/code/lib/dynamic/*.dylib " .. copybase .. "/bin"
         }
 
     configuration {"macosx", "codelite or codeblocks"}
@@ -275,7 +275,7 @@ project "imgui_orx_test"
         postbuildcommands 
         {
             "cp -f " .. copybase .. "/test/*.ini " .. copybase .. "/bin",
-            "cp -f ../lib/dynamic/*.so " .. copybase .. "/bin"
+            "cp -f ../../../../orx/code/lib/dynamic/*.dylib " .. copybase .. "/bin"
         }
 
 
