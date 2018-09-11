@@ -122,13 +122,13 @@ bool ImGui_Orx_Init()
     io.KeyMap[ImGuiKey_RightArrow] = orxKEYBOARD_KEY_RIGHT;
     io.KeyMap[ImGuiKey_UpArrow] = orxKEYBOARD_KEY_UP;
     io.KeyMap[ImGuiKey_DownArrow] = orxKEYBOARD_KEY_DOWN;
-    io.KeyMap[ImGuiKey_PageUp] = orxKEYBOARD_KEY_PAGEUP;
-    io.KeyMap[ImGuiKey_PageDown] = orxKEYBOARD_KEY_PAGEDOWN;
+    io.KeyMap[ImGuiKey_PageUp] = orxKEYBOARD_KEY_PAGE_UP;
+    io.KeyMap[ImGuiKey_PageDown] = orxKEYBOARD_KEY_PAGE_DOWN;
     io.KeyMap[ImGuiKey_Home] = orxKEYBOARD_KEY_HOME;
     io.KeyMap[ImGuiKey_End] = orxKEYBOARD_KEY_END;
     io.KeyMap[ImGuiKey_Delete] = orxKEYBOARD_KEY_DELETE;
     io.KeyMap[ImGuiKey_Backspace] = orxKEYBOARD_KEY_BACKSPACE;
-    io.KeyMap[ImGuiKey_Enter] = orxKEYBOARD_KEY_RETURN;
+    io.KeyMap[ImGuiKey_Enter] = orxKEYBOARD_KEY_ENTER;
     io.KeyMap[ImGuiKey_Escape] = orxKEYBOARD_KEY_ESCAPE;
     io.KeyMap[ImGuiKey_A] = orxKEYBOARD_KEY_A;
     io.KeyMap[ImGuiKey_C] = orxKEYBOARD_KEY_C;

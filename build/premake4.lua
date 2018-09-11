@@ -167,44 +167,8 @@ solution "imgui_orx"
     configuration {"windows", "vs*"}
         buildoptions { "/MP" }
 
---
--- Project: imgui_orx
---
-
-project "imgui_orx"
-
-    files
-    {
-        "../src/**.cpp",
-        "../src/**.c",
-        "../include/**.h",
-        "../imgui/*.cpp",
-        "../imgui/*.h"
-    }
-
-    kind ("StaticLib")
-    targetname ("imgui_orx")
-    targetdir ("../lib/static")
-
-
--- Linux
-
-    configuration {"linux"}
-        buildoptions {"-fPIC", "-std=c++11"}
-        defines {"_GNU_SOURCE"}
-        
-
--- Mac OS X
-
-    configuration{"macosx"}
-        buildoptions { "-Wno-deprecated-declarations", "-Wno-empty-body", "-std=c++11" }
-
-
--- Windows
-
-    configuration {"windows"}
-        
-
+		
+		
 --
 -- Project: imgui_orx_test
 --
@@ -291,3 +255,43 @@ project "imgui_orx_test"
         {
             "winmm"
         }
+
+		
+--
+-- Project: imgui_orx
+--
+
+project "imgui_orx"
+
+    files
+    {
+        "../src/**.cpp",
+        "../src/**.c",
+        "../include/**.h",
+        "../imgui/*.cpp",
+        "../imgui/*.h"
+    }
+
+    kind ("StaticLib")
+    targetname ("imgui_orx")
+    targetdir ("../lib/static")
+
+
+-- Linux
+
+    configuration {"linux"}
+        buildoptions {"-fPIC", "-std=c++11"}
+        defines {"_GNU_SOURCE"}
+        
+
+-- Mac OS X
+
+    configuration{"macosx"}
+        buildoptions { "-Wno-deprecated-declarations", "-Wno-empty-body", "-std=c++11" }
+
+
+-- Windows
+
+    configuration {"windows"}
+        
+
