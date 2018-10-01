@@ -183,20 +183,3 @@ int main(int argc, char **argv)
     orx_Execute(argc, argv, ImGuiOrx_Init, ImGuiOrx_Run, ImGuiOrx_Exit);
     return EXIT_SUCCESS;
     }
-// #else  // __orxMSVC__
-// int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
-//     {
-//     UNUSED(hInstance);
-//     UNUSED(hPrevInstance);
-//     UNUSED(lpCmdLine);
-//     UNUSED(nCmdShow);
-// 
-//     // Inits and executes orx
-//     orx_WinExecute(ImGuiOrx_Init, ImGuiOrx_Run, ImGuiOrx_Exit);
-// 
-//     // Done!
-//     return EXIT_SUCCESS;
-//     }
-// #endif // __orxMSVC__
-
-
