@@ -1,12 +1,15 @@
 #!/bin/sh
 
+OS=`uname -s`
+
 cd build
 
 $ORX/build/premake4 "gmake" 
 $ORX/build/premake4 "codelite" 
 $ORX/build/premake4 "codeblocks" 
-$ORX/build/premake4 "xcode" 
+
+if [ "${OS}" = "Darwin" ]; then
+	$ORX/build/premake4 "xcode4" 
+fi
  
-cd..
-
-
+cd ..
