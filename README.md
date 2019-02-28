@@ -21,15 +21,12 @@ When you've done with cloning, setupping and building, please check if in your e
 
 ### Setup ImGuiOrx
 
-After cloning ImGuiOrx repository you need to run **./setup(.bat/.sh)** and let it create all project files you need.
-
 ImGuiOrx library depends on ImGui (https://github.com/ocornut/imgui.git) hence a submodule has been used.
+When cloning the repository, please use --recursive option in order to allow submodules creation.
 
-Ensure the submodules required by this repo are updated before building. To do so:
+* git clone https://github.com/thegwydd/ImGuiOrx.git --recursive
 
-* cd into the imguiorx repo folder
-* git submodule init
-* git submodule update
+After cloning ImGuiOrx repository you need to run **./setup(.bat/.sh)** and let it create all project files you need.
 
 
 ### Build ImGuiOrx Library
