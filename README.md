@@ -68,6 +68,13 @@ In addition to Orx Game Engine header folder, you need to specify two more folde
 To allow your linker to link the proper library you need to specify static library folder where ImGuiOrx static library can be found:
  -**(ImGuiOrx folder)/lib/static**
 
+You need to link at least two libraries in order to build your project:
+- imgui_orx
+- orx
+ 
+**In your test project, the *orx* library must be the last one to be linked, hence, it must be put after imgui_orx library.**
+
+ 
 As you can see in **(ImGuiOrx folder)/test/main.cpp**, you need to include:
 
 - ImGui_Orx.h
