@@ -15,7 +15,7 @@ Before building ImGuiOrx, you need to perform few steps.
 ### Build Orx Game Engine
 
 Please, clone Orx Game Engine from here (https://github.com/orx/orx) and follow instructions on how to build it.  
-If you're a Linux/OSx user, please take also a look here (http://orx-project.org/wiki/en/tutorials/main#linux). 
+If you're a Linux/OSx user, please take also a look here (http://orx-project.org/wiki/en/tutorials/main#linux).
 
 When you've done with cloning, setupping and building, please check if in your environment variables you have one named ORX that points to the Orx Game Engine folder.
 
@@ -44,7 +44,7 @@ mingw32-make imgui_orx config=release
 
 Produces lib/static/libimgui_orx.a and lib/static/libimgui_orxd.a
 
-### IMPORTANT for Visual Studio users: 
+### IMPORTANT for Visual Studio users:
 When you load the solution you need to right-click on the solution and then "Retarget Solution".
 
 ***
@@ -71,10 +71,10 @@ To allow your linker to link the proper library you need to specify static libra
 You need to link at least two libraries in order to build your project:
 - imgui_orx
 - orx
- 
+
 **In your test project, the *orx* library must be the last one to be linked, hence, it must be put after imgui_orx library.**
 
- 
+
 As you can see in **(ImGuiOrx folder)/test/main.cpp**, you need to include:
 
 - ImGui_Orx.h
@@ -88,6 +88,8 @@ That's needed because we want to render ImGui stuff on top of other game stuff.
 
 To better understand how to use ImGui, please take a look at **(ImGuiOrx folder)/imgui/imgui_demo.cpp** as it exposes almost all features ImGui implements.
 
+## More details
+For a walkthrough on how to set up your own ImGui based project, see http://orx-project.org/wiki/en/tutorials/imgui
 
 ***
 
